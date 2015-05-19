@@ -1,6 +1,21 @@
 # opencart-cielo
 Plugin de pagamento Cielo para Opencart 2
 
+============================
+
+Este plugin faz uso da Library de [Artur Magalhães - nezkal](https://github.com/nezkal/Cielo).
+
+> Cartões Suportados:
+
+> * American Express
+> * Aura
+> * Diners
+> * Discover
+> * Elo
+> * JCB
+> * Master Card
+> * Visa
+
 Instalação:
 
 - Faça o upload da pasta 'upload' para a raiz de sua instalação do Opencart

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<transacao id="1281720155495" versao="1.1.0" xmlns="http://ecommerce.cbmp.com.br">
+  <tid>10176934870064731001</tid>
+  <pan>4Sxi/xbNRu7MUMbbCV0RXoNBYfsD06YU422lOspYxGM=</pan>
+  <dados-pedido>
+    <numero>806796</numero>
+    <valor>4732</valor>
+    <moeda>986</moeda>
+    <data-hora>2010-08-13T13:57:19.726-03:00</data-hora>
+    <idioma>PT</idioma>
+  </dados-pedido>
+  <forma-pagamento>
+    <bandeira>visa</bandeira>
+    <produto>1</produto>
+    <parcelas>1</parcelas>
+  </forma-pagamento>
+  <status>6</status>
+  <autenticacao>
+    <codigo>6</codigo>
+    <mensagem>Transacao sem autenticacao</mensagem>
+    <data-hora>2010-08-13T13:58:04.934-03:00</data-hora>
+    <valor>4732</valor>
+    <eci>6</eci>
+  </autenticacao>
+  <autorizacao>
+    <codigo>6</codigo>
+    <mensagem>Transação autorizada</mensagem>
+    <data-hora>2010-08-13T13:58:04.953-03:00</data-hora>
+    <valor>4732</valor>
+    <lr>00</lr>
+    <arp>71412</arp>
+  </autorizacao>
+  <captura>
+    <codigo>6</codigo>
+    <mensagem>Transacao capturada com sucesso</mensagem>
+    <data-hora>2010-08-13T13:58:07.016-03:00</data-hora>
+    <valor>4732</valor>
+  </captura>
+</transacao>

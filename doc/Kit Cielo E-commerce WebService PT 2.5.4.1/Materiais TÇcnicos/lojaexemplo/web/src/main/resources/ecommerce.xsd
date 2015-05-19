@@ -1,0 +1,724 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://ecommerce.cbmp.com.br" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ecommerce.cbmp.com.br">
+
+    <xsd:complexType name="RequisicaoNovaTransacao">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:Mensagem">
+    			<xsd:sequence>
+    				<xsd:element name="dados-ec"
+    					type="tns:DadosEcAutenticacao" maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="dados-portador"
+    					type="tns:DadosCartao" maxOccurs="1" minOccurs="0">
+    				</xsd:element>
+    				<xsd:element name="dados-pedido"
+    					type="tns:DadosPedido" maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="forma-pagamento"
+    					type="tns:FormaPagamento" maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="url-retorno" maxOccurs="1"
+    					minOccurs="1">
+    					<xsd:simpleType>
+    						<xsd:restriction base="xsd:string">
+    							<xsd:minLength value="1"></xsd:minLength>
+    							<xsd:maxLength value="1024"></xsd:maxLength>
+    						</xsd:restriction>
+    					</xsd:simpleType>
+    				</xsd:element>
+    				<xsd:element name="autorizar" maxOccurs="1"
+    					minOccurs="1">
+    					<xsd:annotation>
+    						<xsd:documentation>
+    							0 - Nao autorizar 1 - Autorizar somente
+    							autenticado 2 - Autorizar nao
+    							autenticado e autenticado
+    						</xsd:documentation>
+    					</xsd:annotation>
+    					<xsd:simpleType>
+    						<xsd:restriction base="xsd:string">
+    							<xsd:enumeration value="0"></xsd:enumeration>
+    							<xsd:enumeration value="1"></xsd:enumeration>
+    							<xsd:enumeration value="2"></xsd:enumeration>
+    						</xsd:restriction>
+    					</xsd:simpleType>
+    				</xsd:element>
+    				<xsd:element name="capturar" type="xsd:boolean"
+    					maxOccurs="1" minOccurs="1">
+                        <xsd:annotation>
+                        	<xsd:documentation>
+                        		Define se a transacao sera capturada apos uma autorizacao com
+                        		sucesso.
+                        	</xsd:documentation>
+                        </xsd:annotation>
+    				</xsd:element>
+    				<xsd:element name="campo-livre" maxOccurs="1"
+    					minOccurs="0">
+    					<xsd:simpleType>
+    						<xsd:restriction base="xsd:string">
+    							<xsd:maxLength value="128"></xsd:maxLength>
+    						</xsd:restriction>
+    					</xsd:simpleType>
+    				</xsd:element>
+    				<xsd:element name="bin" maxOccurs="1"
+    					minOccurs="0">
+    					<xsd:simpleType>
+    						<xsd:restriction base="xsd:string">
+    							<xsd:pattern value="[0-9]{6}"></xsd:pattern>
+    							<xsd:length value="6"></xsd:length>
+    						</xsd:restriction>
+    					</xsd:simpleType>
+    				</xsd:element>
+    			</xsd:sequence>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="RequisicaoCaptura">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:Requisicao">
+    			<xsd:sequence>
+    				<xsd:element name="valor" maxOccurs="1" minOccurs="0">
+    					<xsd:simpleType>
+    						<xsd:restriction base="xsd:int">
+
+    							<xsd:minInclusive value="0"></xsd:minInclusive>
+    							<xsd:maxInclusive value="999999999"></xsd:maxInclusive>
+    						</xsd:restriction>
+    					</xsd:simpleType>
+    				</xsd:element>
+    				<xsd:element name="anexo" type="xsd:string" maxOccurs="1" minOccurs="0"></xsd:element>
+    			</xsd:sequence>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="RequisicaoCancelamento">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:Requisicao"></xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="RequisicaoConsulta">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:Requisicao"></xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="RequisicaoAutorizacaoTid">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:Requisicao"></xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="DadosPedido">
+    	<xsd:sequence>
+    		<xsd:element name="numero" minOccurs="1" maxOccurs="1">
+    			<xsd:simpleType>
+    				<xsd:restriction base="xsd:string">
+    					<xsd:pattern value="[a-zA-Z0-9]{1,20}"></xsd:pattern>
+    					<xsd:minLength value="1"></xsd:minLength>
+    					<xsd:maxLength value="20"></xsd:maxLength>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    		<xsd:element name="valor" minOccurs="1" maxOccurs="1">
+    			<xsd:annotation>
+    				<xsd:documentation>
+    					Valor com formato somente numeros Ex: 1.020,99
+    					deve ser enviado como 102099
+    				</xsd:documentation>
+    			</xsd:annotation>
+    			<xsd:simpleType>
+    				<xsd:restriction base="xsd:int">
+    					<xsd:maxInclusive value="999999999"></xsd:maxInclusive>
+    					<xsd:minInclusive value="0"></xsd:minInclusive>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    		<xsd:element name="moeda" minOccurs="1" maxOccurs="1">
+    			<xsd:annotation>
+    				<xsd:documentation>
+    					ISO http://en.wikipedia.org/wiki/ISO_4217.Para
+    					moeda brasileira, 986
+    				</xsd:documentation>
+    			</xsd:annotation>
+    			<xsd:simpleType>
+    				<xsd:restriction base="xsd:int">
+    					<xsd:minInclusive value="0"></xsd:minInclusive>
+    					<xsd:maxInclusive value="999"></xsd:maxInclusive>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    		<xsd:element name="data-hora" type="xsd:dateTime" minOccurs="1" maxOccurs="1">
+    			<xsd:annotation>
+    				<xsd:documentation>
+    					Formato Brasileiro ex: 15/01/2009 17:00:00
+    				</xsd:documentation>
+    			</xsd:annotation>
+    		</xsd:element>
+    		<xsd:element name="descricao" maxOccurs="1" minOccurs="0">
+    			<xsd:simpleType>
+    				<xsd:restriction base="xsd:string">
+    					<xsd:maxLength value="1024"></xsd:maxLength>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    		<xsd:element name="idioma" maxOccurs="1" minOccurs="0" type="tns:idiomaType">
+    		</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="RequisicaoAutorizacaoPortador">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:Requisicao">
+    			<xsd:sequence>
+    				<xsd:element name="dados-cartao" type="tns:DadosCartao" maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="dados-pedido" type="tns:DadosPedido" maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="forma-pagamento" type="tns:FormaPagamento" maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="capturar-automaticamente" type="xsd:boolean" maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="campo-livre" maxOccurs="1" minOccurs="0">
+    					<xsd:simpleType>
+    						<xsd:restriction base="xsd:string">
+    							<xsd:maxLength value="128"></xsd:maxLength>
+    						</xsd:restriction>
+    					</xsd:simpleType>
+    				</xsd:element>
+    			</xsd:sequence>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="Requisicao">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:Mensagem">
+    			<xsd:sequence>
+    				<xsd:element name="tid" type="tns:tidType">
+    				</xsd:element>
+    				<xsd:element name="dados-ec" type="tns:DadosEc"></xsd:element>
+    			</xsd:sequence>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+    
+    <xsd:element name="requisicao-autenticacao" type="tns:RequisicaoNovaTransacao"></xsd:element>
+
+    <xsd:complexType name="DadosEc">
+    	<xsd:sequence>
+    		<xsd:element name="numero" minOccurs="1" maxOccurs="1">
+    			<xsd:simpleType>
+    				<xsd:restriction base="xsd:string">
+    					<xsd:pattern value="[0-9]{1,20}"></xsd:pattern>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    		<xsd:element name="chave" maxOccurs="1" minOccurs="1">
+                <xsd:annotation>
+                	<xsd:documentation>
+                		Campo informado pela Cielo no momento do
+                		cadastro do EC
+                	</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+    				<xsd:restriction base="xsd:string">
+    					<xsd:minLength value="1"></xsd:minLength>
+    					<xsd:maxLength value="100"></xsd:maxLength>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="Mensagem">
+    	<xsd:sequence>
+    	</xsd:sequence>
+    	<xsd:attribute name="id" use="required" type="xsd:string">
+    	</xsd:attribute>
+    	<xsd:attribute name="versao" use="required">
+    		<xsd:simpleType>
+    			<xsd:restriction base="xsd:string">
+    				<xsd:pattern value="[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}">
+    				</xsd:pattern>
+    			</xsd:restriction>
+    		</xsd:simpleType>
+    	</xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="DadosCartao">
+    	<xsd:sequence>
+    		<xsd:element name="numero" minOccurs="1" maxOccurs="1">
+    			<xsd:simpleType>
+    				<xsd:restriction base="xsd:string">
+    					<xsd:pattern value="[0-9]{1,19}"></xsd:pattern>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    		<xsd:element name="validade" maxOccurs="1" minOccurs="1">
+                <xsd:annotation>
+                	<xsd:documentation>
+                		Formato YYYYMM
+                	</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+    				<xsd:restriction base="xsd:string">
+    					<xsd:length value="6"></xsd:length>
+    					<xsd:pattern value="[0-9]{6}"></xsd:pattern>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    		<xsd:element name="indicador" maxOccurs="1" minOccurs="1">
+    			<xsd:annotation>
+    				<xsd:documentation>
+    					0 - Nao informado 1 - Informado 2 - Ilegivel 9 - Inexistente
+    				</xsd:documentation>
+    			</xsd:annotation>
+    			<xsd:simpleType>
+    				<xsd:restriction base="xsd:string">
+    					<xsd:enumeration value="0"></xsd:enumeration>
+    					<xsd:enumeration value="1"></xsd:enumeration>
+    					<xsd:enumeration value="2"></xsd:enumeration>
+    					<xsd:enumeration value="9"></xsd:enumeration>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    		<xsd:element name="codigo-seguranca" maxOccurs="1" minOccurs="0">
+                <xsd:annotation>
+                	<xsd:documentation></xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+    				<xsd:restriction base="xsd:int">
+    					<xsd:minInclusive value="0"></xsd:minInclusive>
+    					<xsd:maxInclusive value="999"></xsd:maxInclusive>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    		<xsd:element name="nome-portador" maxOccurs="1" minOccurs="0">
+    			<xsd:simpleType>
+    				<xsd:restriction base="xsd:string">
+    					<xsd:minLength value="1"></xsd:minLength>
+    					<xsd:maxLength value="50"></xsd:maxLength>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="requisicao-autorizacao-portador" type="tns:RequisicaoAutorizacaoPortador"></xsd:element>
+
+    <xsd:element name="requisicao-autorizacao-tid" type="tns:RequisicaoAutorizacaoTid"></xsd:element>
+
+    <xsd:element name="requisicao-cancelamento" type="tns:RequisicaoCancelamento"></xsd:element>
+
+    <xsd:element name="requisicao-captura" type="tns:RequisicaoCaptura"></xsd:element>
+
+    <xsd:element name="requisicao-consulta" type="tns:RequisicaoConsulta"></xsd:element>
+
+    <xsd:complexType name="FormaPagamento">
+    	<xsd:sequence>
+    		<xsd:element name="produto" maxOccurs="1" minOccurs="1">
+                <xsd:annotation>
+                	<xsd:documentation>
+                		1 - Crédito a Vista 2 - Parcelado Loja 3 - Parcelado Adm A - Visa Electron
+                	</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+    				<xsd:restriction base="xsd:string">
+    					<xsd:pattern value="[0-9A-Z]{1,2}"></xsd:pattern>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    		<xsd:element name="parcelas" maxOccurs="1" minOccurs="1">
+    			<xsd:simpleType>
+    				<xsd:restriction base="xsd:int">
+    					<xsd:minInclusive value="1"></xsd:minInclusive>
+    					<xsd:maxInclusive value="999"></xsd:maxInclusive>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="DadosEcAutenticacao">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:DadosEc">
+    			<xsd:sequence>
+                    <xsd:element name="nome" maxOccurs="1" minOccurs="1">
+    			<xsd:simpleType>
+    				<xsd:restriction base="xsd:string">
+    					<xsd:maxLength value="25"></xsd:maxLength>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element name="codigo-pais" maxOccurs="1"
+                    	minOccurs="1">
+                    	<xsd:annotation>
+                    		<xsd:documentation>
+                    			ISO 3166 (Numerica) http://en.wikipedia.org/wiki/ISO_3166-1_numeric
+                    			Para o Brasil o codigo e 076.
+                    		</xsd:documentation>
+                    	</xsd:annotation>
+                    	<xsd:simpleType>
+                    		<xsd:restriction base="xsd:string">
+                    			<xsd:pattern value="[0-9]{3}"></xsd:pattern>
+                    		</xsd:restriction>
+                    	</xsd:simpleType>
+                    </xsd:element>
+    			</xsd:sequence>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="Retorno">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:Mensagem">
+    			<xsd:sequence>
+    				<xsd:element name="tid" type="tns:tidType"
+    					maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="pan" type="xsd:string"
+    					maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="dados-pedido"
+    					type="tns:DadosPedido" maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="forma-pagamento"
+    					type="tns:FormaPagamento" maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="status" type="tns:statusType"
+    					maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="autenticacao"
+    					type="tns:ProcessamentoAutenticacao" maxOccurs="1" minOccurs="0">
+    				</xsd:element>
+    				<xsd:element name="autorizacao"
+    					type="tns:ProcessamentoAutorizacao" maxOccurs="1" minOccurs="0">
+    				</xsd:element>
+    				<xsd:element name="captura" type="tns:Processamento"
+    					maxOccurs="1" minOccurs="0">
+    				</xsd:element>
+    				<xsd:element name="cancelamento"
+    					type="tns:Processamento" maxOccurs="1" minOccurs="0">
+    				</xsd:element>
+    				<xsd:element name="url-autenticacao"
+    					type="xsd:string" maxOccurs="1" minOccurs="0">
+    				</xsd:element>
+    			</xsd:sequence>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:simpleType name="tidType">
+    	<xsd:restriction base="xsd:string">
+    		<xsd:pattern value="[0-9a-zA-Z]{20,40}"></xsd:pattern>
+    	</xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="Processamento">
+    	<xsd:sequence>
+    		<xsd:element name="codigo" type="tns:statusType" maxOccurs="1" minOccurs="1">
+    		</xsd:element>
+    		<xsd:element name="mensagem" type="xsd:string" maxOccurs="1" minOccurs="1">
+    		</xsd:element>
+    		<xsd:element name="data-hora" type="xsd:dateTime" maxOccurs="1" minOccurs="1">
+    		</xsd:element>
+    		<xsd:element name="valor" maxOccurs="1" minOccurs="1">
+    			<xsd:simpleType>
+    				<xsd:restriction base="xsd:string">
+    					<xsd:pattern value="[0-9]{1,12}"></xsd:pattern>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="datahoraType">
+    	<xsd:restriction base="xsd:dateTime">
+    	</xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="BuyPage">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:Mensagem">
+    			<xsd:sequence>
+    				<xsd:element name="tid-hash" maxOccurs="1"
+    					minOccurs="1">
+    					<xsd:simpleType>
+    						<xsd:restriction base="xsd:string">
+    							<xsd:minLength value="1"></xsd:minLength>
+    						</xsd:restriction>
+    					</xsd:simpleType>
+    				</xsd:element>
+    			</xsd:sequence>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="BuyPageGravaDadosCartao">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:BuyPage">
+    			<xsd:sequence>
+    				<xsd:element name="dados-cartao"
+    					type="tns:DadosCartao" maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="browser" type="tns:BrowserType" maxOccurs="1" minOccurs="1"></xsd:element>
+    			</xsd:sequence>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="BuyPagePARes">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:BuyPage">
+    			<xsd:sequence>
+    				<xsd:element name="md" type="xsd:string"
+    					maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="PaRes" type="xsd:string" maxOccurs="1" minOccurs="1"></xsd:element>
+    			</xsd:sequence>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="BuyPageTransacaoNaoFinalizada">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:BuyPage">
+    			<xsd:sequence>
+    				<xsd:element name="motivo-cancelamento" maxOccurs="1" minOccurs="1">
+    					<xsd:simpleType>
+    						<xsd:restriction base="xsd:string">
+    							<xsd:enumeration
+    								value="SESSAO_EXPIRADA">
+    							</xsd:enumeration>
+    							<xsd:enumeration
+    								value="CANCELAMENTO_SOLICITADO">
+    							</xsd:enumeration>
+    							<xsd:enumeration value="FECHAMENTO_JANELA"></xsd:enumeration>
+    						</xsd:restriction>
+    					</xsd:simpleType>
+    				</xsd:element>
+    			</xsd:sequence>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:element name="buypage-grava-dados-cartao" type="tns:BuyPageGravaDadosCartao"></xsd:element>
+
+    <xsd:element name="buypage-pares" type="tns:BuyPagePARes"></xsd:element>
+
+    <xsd:element name="buypage-transacao-nao-finalizada" type="tns:BuyPageTransacaoNaoFinalizada"></xsd:element>
+
+    <xsd:element name="buy-page-startup" type="tns:BuyPageStartup"></xsd:element>
+
+    <xsd:complexType name="BuyPageStartup">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:BuyPage">
+    			<xsd:sequence>
+    				<xsd:element name="browser" type="tns:BrowserType" maxOccurs="1" minOccurs="1"></xsd:element>
+    			</xsd:sequence>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="BuyPageRetornoPAReq">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:BuyPage">
+    			<xsd:sequence>
+    				<xsd:element name="url-acs" maxOccurs="1"
+    					minOccurs="1">
+    					<xsd:simpleType>
+    						<xsd:restriction base="xsd:string">
+    							<xsd:minLength value="1"></xsd:minLength>
+    						</xsd:restriction>
+    					</xsd:simpleType>
+    				</xsd:element>
+    				<xsd:element name="pareq" maxOccurs="1"
+    					minOccurs="1">
+    					<xsd:simpleType>
+    						<xsd:restriction base="xsd:string">
+    							<xsd:minLength value="1"></xsd:minLength>
+    						</xsd:restriction>
+    					</xsd:simpleType>
+    				</xsd:element>
+    			</xsd:sequence>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:element name="transacao" type="tns:Retorno"></xsd:element>
+
+    <xsd:element name="buy-page-retorno-pareq" type="tns:BuyPageRetornoPAReq"></xsd:element>
+
+    <xsd:complexType name="BuyPageError">
+    	<xsd:sequence>
+    		<xsd:element name="codigo" type="xsd:string"></xsd:element>
+    		<xsd:element name="mensagem" type="xsd:string"></xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="buy-page-error" type="tns:BuyPageError"></xsd:element>
+
+    <xsd:complexType name="RequisicaoErro">
+    	<xsd:sequence>
+    		<xsd:element name="codigo" type="xsd:string"></xsd:element>
+    		<xsd:element name="mensagem" type="xsd:string"></xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="erro" type="tns:RequisicaoErro"></xsd:element>
+
+    <xsd:complexType name="BuyPageRetorno">
+        <xsd:annotation>
+        	<xsd:documentation>
+        		1 Em andamento 2 Autenticada 3 Não autenticada 4
+        		Pendente 5 Não autorizada 6 Capturada 7 Capturada
+        		parcialmente 8 Não capturada 9 Cancelada
+        	</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+    		<xsd:extension base="tns:Retorno">
+    			<xsd:sequence>
+    				<xsd:element name="url-imagem" type="xsd:string"
+    					maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="nome-loja" type="xsd:string"
+    					maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="numero-loja" type="xsd:string"
+    					maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="chave-loja-mpi" type="xsd:string"
+    					maxOccurs="1" minOccurs="1">
+    				</xsd:element>
+    				<xsd:element name="codigo-pais-loja" maxOccurs="1"
+    					minOccurs="1">
+    					<xsd:simpleType>
+    						<xsd:restriction base="xsd:string">
+    							<xsd:pattern value="[0-9]{3}"></xsd:pattern>
+    						</xsd:restriction>
+    					</xsd:simpleType>
+    				</xsd:element>
+    				<xsd:element name="bin" maxOccurs="1"
+    					minOccurs="0">
+    					<xsd:simpleType>
+    						<xsd:restriction base="xsd:string">
+    							<xsd:length value="6"></xsd:length>
+    							<xsd:pattern value="[0-9]{6}"></xsd:pattern>
+    						</xsd:restriction>
+    					</xsd:simpleType>
+    				</xsd:element>
+    				<xsd:element name="dados-portador"
+    					type="tns:DadosCartao" maxOccurs="1" minOccurs="0">
+    				</xsd:element>
+    				<xsd:element name="buypage-status" maxOccurs="1"
+    					minOccurs="1" type="xsd:int">
+    				</xsd:element>
+    			</xsd:sequence>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:element name="buypage-retorno" type="tns:BuyPageRetorno"></xsd:element>
+
+    <xsd:complexType name="RequisicaoTid">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:Mensagem">
+    			<xsd:sequence>
+    				<xsd:element name="dados-ec" type="tns:DadosEc" maxOccurs="1" minOccurs="1"></xsd:element>
+    				<xsd:element name="forma-pagamento" type="tns:FormaPagamento" maxOccurs="1" minOccurs="1"></xsd:element>
+    			</xsd:sequence>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:element name="requisicao-tid" type="tns:RequisicaoTid"></xsd:element>
+
+    <xsd:complexType name="RetornoTid">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:Mensagem">
+    			<xsd:sequence>
+    				<xsd:element name="tid" type="tns:tidType" maxOccurs="1" minOccurs="1"></xsd:element>
+    			</xsd:sequence>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:simpleType name="idiomaType">
+    	<xsd:restriction base="xsd:string">
+    		<xsd:enumeration value="PT"></xsd:enumeration>
+    		<xsd:enumeration value="EN"></xsd:enumeration>
+    		<xsd:enumeration value="ES"></xsd:enumeration>
+    		<xsd:length value="2"></xsd:length>
+    	</xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:element name="retorno-tid" type="tns:RetornoTid"></xsd:element>
+
+    <xsd:simpleType name="statusType">
+        <xsd:annotation>
+        	<xsd:documentation>
+        		1 Em andamento 2 Autenticada 3 Não autenticada 4
+        		Pendente 5 Não autorizada 6 Capturada 7 Capturada
+        		parcialmente 8 Não capturada 9 Cancelada
+        	</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+    		<xsd:enumeration value="1"></xsd:enumeration>
+    		<xsd:enumeration value="2"></xsd:enumeration>
+    		<xsd:enumeration value="3"></xsd:enumeration>
+    		<xsd:enumeration value="4"></xsd:enumeration>
+    		<xsd:enumeration value="5"></xsd:enumeration>
+    		<xsd:enumeration value="6"></xsd:enumeration>
+    		<xsd:enumeration value="7"></xsd:enumeration>
+    		<xsd:enumeration value="8"></xsd:enumeration>
+    		<xsd:enumeration value="9"></xsd:enumeration>
+    		<xsd:enumeration value="0"></xsd:enumeration>
+    		<xsd:enumeration value="10"></xsd:enumeration>
+    	</xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="BrowserType">
+    	<xsd:sequence>
+    		<xsd:element name="user-agent" type="xsd:string"></xsd:element>
+    		<xsd:element name="accept" type="xsd:string"></xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ProcessamentoAutenticacao">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:Processamento">
+    			<xsd:sequence>
+    				<xsd:element name="eci" maxOccurs="1" minOccurs="0">
+    					<xsd:simpleType>
+    						<xsd:restriction base="xsd:int">
+    							<xsd:pattern value="[0-9]{2}"></xsd:pattern>
+    						</xsd:restriction>
+    					</xsd:simpleType>
+    				</xsd:element>
+    			</xsd:sequence>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="ProcessamentoAutorizacao">
+    	<xsd:complexContent>
+    		<xsd:extension base="tns:Processamento">
+    			<xsd:sequence>
+    				<xsd:element name="lr" maxOccurs="1"
+    					minOccurs="0">
+    					<xsd:simpleType>
+    						<xsd:restriction base="xsd:string">
+    							<xsd:minLength value="1"></xsd:minLength>
+    							<xsd:maxLength value="4"></xsd:maxLength>
+    						</xsd:restriction>
+    					</xsd:simpleType>
+    				</xsd:element>
+    				<xsd:element name="arp" type="xsd:int" maxOccurs="1" minOccurs="0"></xsd:element>
+    			</xsd:sequence>
+    		</xsd:extension>
+    	</xsd:complexContent>
+    </xsd:complexType>
+</xsd:schema>

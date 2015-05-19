@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<requisicao-cancelamento id="39d36eb6-5ae9-4308-89a1-455d299460c0" versao="1.3.0">
+    <tid>100699306908642E1001</tid>
+    <dados-ec>
+        <numero>1006993069</numero>
+        <chave>25fbb99741c739dd84d7b06ec78c9bac718838630f30b112d033ce2e621b34f3</chave>
+    </dados-ec>
+    <valor>0</valor>
+</requisicao-cancelamento>

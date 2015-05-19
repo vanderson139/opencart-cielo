@@ -1,0 +1,31 @@
+<transacao id="1281720373850" versao="1.1.0" xmlns="http://ecommerce.cbmp.com.br">
+  <tid>10283159180001491001</tid>
+  <pan>nP3uzY5ILTqIPHRwFt2m8ldoxaF3SIaM8+Z+iH+9rec=</pan>
+  <dados-pedido>
+    <numero>1</numero>
+    <valor>97504</valor>
+    <moeda>986</moeda>
+    <data-hora>2010-08-11T06:51:42.598-03:00</data-hora>
+    <idioma>EN</idioma>
+  </dados-pedido>
+  <forma-pagamento>
+    <bandeira>visa</bandeira>
+    <produto>1</produto>
+    <parcelas>1</parcelas>
+  </forma-pagamento>
+  <status>5</status>
+  <autenticacao>
+    <codigo>5</codigo>
+    <mensagem>Transacao sem autenticacao</mensagem>
+    <data-hora>2010-08-11T06:52:35.506-03:00</data-hora>
+    <valor>97504</valor>
+    <eci>6</eci>
+  </autenticacao>
+  <autorizacao>
+    <codigo>5</codigo>
+    <mensagem>Autorização negada</mensagem>
+    <data-hora>2010-08-11T06:52:35.578-03:00</data-hora>
+    <valor>97504</valor>
+    <lr>57</lr>
+  </autorizacao>
+</transacao>
