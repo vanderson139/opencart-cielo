@@ -1,0 +1,23 @@
+<modification>
+        <name>Inclusao da Aba Cielo</name>
+        <version>1.0</version>
+        <author>Vanderson Lopes</author>
+        <code>cielo_admin_controller_common_header</code>
+        <file path="admin/controller/common/header.php">
+                <operation info="Inclusao da Aba Cielo">
+                        <search><![CDATA[$this->load->language('common/header');]]></search>
+                        <add position="after"><![CDATA[
+                            $this->language->load('payment/cielo');
+
+                            $data['text_cielo_configure'] = $this->language->get('text_cielo_configure');             
+                            $data['text_cielo_transactions'] = $this->language->get('text_cielo_transactions');           
+
+                            if (isset($this->session->data['token']))
+                            {
+                                $data['link_cielo_configure'] = $this->url->link('payment/cielo/edit', 'token=' . $this->session->data['token'], 'SSL');
+                                $data['link_cielo_transactions'] = $this->url->link('payment/cielo', 'token=' . $this->session->data['token'], 'SSL');
+                            }
+                        ]]></add>
+                </operation>
+        </file>
+</modification>
