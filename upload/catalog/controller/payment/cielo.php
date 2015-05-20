@@ -117,7 +117,7 @@ class ControllerPaymentCielo extends Controller {
             $loja
                 ->setNomeLoja($order_info['store_name'])
                 ->setAmbiente(\Tritoq\Payment\Cielo\Loja::AMBIENTE_PRODUCAO)
-                ->setUrlRetorno($this->url->link('payment/cielo/processa'))
+                ->setUrlRetorno($this->url->link('payment/cielo/callback'))
                 ->setChave($this->config->get('cielo_chave'))
                 ->setNumeroLoja($this->config->get('cielo_afiliacao'))
                 ->setSslCertificado(DIR_SYSTEM . 'library/Tritoq/Payment/Cielo/ssl/ecommerce.cielo.com.br.cer');
@@ -418,7 +418,7 @@ class ControllerPaymentCielo extends Controller {
         $this->response->setOutput($parcelamento);
 	}
 
-    public function processa() {
+    public function callback() {
 
         if(!isset($this->session->data['order_id'])) {
             return $this->response->redirect($this->url->link('common/home'));
