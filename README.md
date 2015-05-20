@@ -1,5 +1,4 @@
 #Módulo de pagamento Cielo para Opencart 2
-============================
 
 Este módulo faz uso da Library de [Artur Magalhães - nezkal](https://github.com/nezkal/Cielo).
 
