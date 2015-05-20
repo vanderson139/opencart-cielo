@@ -1,27 +1,21 @@
 <modification>
-        <name>Inclusao de Aba do Módulo Cielo</name>
-        <version>1.0</version>
-        <author>Vanderson Lopes</author>
-        <code>cielo_admin_template_common_header</code>
-        <file path="admin/view/template/common/header.tpl">
-                <operation info="Inclusao de Aba do Módulo Cielo">
-                        <search index="1"><![CDATA[<li class="dropdown">]]></search>
-                        <add position="before"><![CDATA[
-                        <?php
-                            if ( $this->config->get('cielo_status') == 1 )
-                            {
-                            ?>
-                                <li id="Cielo" class="dropdown">
-                                    <a href="<?php echo $link_cielo_configure; ?>" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-credit-card fa-lg"></i></a>
-                                    <ul class="dropdown-menu dropdown-menu-right">
-                                      <li><a href="<?php echo $link_cielo_configure; ?>"><?php echo $text_cielo_configure; ?></a></li>
-                                      <li><a href="<?php echo $link_cielo_transactions; ?>"><?php echo $text_cielo_transactions; ?></a></li>
-                                    </ul>
-                                </li>
-                            <?php
-                            }
-                            ?>
-                        ]]></add>
-                </operation>
-        </file>
+    <name>Inclusao de Aba do Módulo Cielo</name>
+    <version>1.0</version>
+    <author>Vanderson Lopes</author>
+    <code>cielo_admin_template_common_header</code>
+    <file path="admin/view/template/common/header.tpl">
+        <operation info="Inclusao de Aba do Módulo Cielo">
+                <search index="1"><![CDATA[<li class="dropdown">]]></search>
+                <add position="before"><![CDATA[
+    <?php if ( $this->config->get('cielo_status') == 1 ) { ?>
+        <li id="Cielo" class="dropdown">
+            <a href="<?php echo $link_cielo_configure; ?>" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-credit-card fa-lg"></i></a>
+            <ul class="dropdown-menu dropdown-menu-right">
+              <li><a href="<?php echo $link_cielo_configure; ?>"><?php echo $text_cielo_configure; ?></a></li>
+              <li><a href="<?php echo $link_cielo_transactions; ?>"><?php echo $text_cielo_transactions; ?></a></li>
+            </ul>
+        </li>
+    <?php } ?>]]></add>
+        </operation>
+    </file>
 </modification>
