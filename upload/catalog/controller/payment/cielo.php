@@ -316,7 +316,7 @@ class ControllerPaymentCielo extends Controller {
                     $this->model_payment_cielo->addTransaction($data);
                 }
 
-                $json['redirect'] = $transacao->getUrlAutenticacao();
+                $json['redirect'] = (string)$transacao->getUrlAutenticacao();
             } else {
                 $requisicoes = $transacao->getRequisicoes(\Tritoq\Payment\Cielo\Transacao::REQUISICAO_TIPO_TRANSACAO);
 
