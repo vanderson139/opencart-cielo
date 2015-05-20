@@ -1,9 +1,7 @@
-# opencart-cielo
-Plugin de pagamento Cielo para Opencart 2
-
+#Módulo de pagamento Cielo para Opencart 2
 ============================
 
-Este plugin faz uso da Library de [Artur Magalhães - nezkal](https://github.com/nezkal/Cielo).
+Este módulo faz uso da Library de [Artur Magalhães - nezkal](https://github.com/nezkal/Cielo).
 
 > Cartões Suportados:
 
@@ -18,7 +16,7 @@ Este plugin faz uso da Library de [Artur Magalhães - nezkal](https://github.com
 
 Instalação:
 
-- Faça o upload da pasta 'upload' para a raiz de sua instalação do Opencart
+- Faça o upload do conteúdo da pasta 'upload' para a raiz de sua instalação do Opencart
 
 - Acesse o instalador de extensões no admin e faça o upload dos OCMODs para adicionar o menu no canto superior direito do painel (opcional)
 
