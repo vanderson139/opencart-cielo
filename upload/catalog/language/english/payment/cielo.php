@@ -1,6 +1,6 @@
 <?php
 // Text
-$_['text_title']     = 'Cielo';
+$_['text_title']     = 'Cartão de Crédito/Débito processado pela CIELO';
 $_['text_barra']     = 'INFORMAÇÕES DO PAGAMENTO';
 $_['text_teste']     = 'ATENÇÃO! O Gateway de Pagamento está em "Modo de Teste". Sua conta não será cobrada.';
 $_['text_pagamento'] = 'Efetuar Pagamento';
