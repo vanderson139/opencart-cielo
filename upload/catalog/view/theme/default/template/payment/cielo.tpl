@@ -151,7 +151,7 @@ jQuery('#paymentForm').submit(function(event) {
                 });
             } else if(!!data.redirect) {
 
-                if(!!data.redirect[0]) {
+                if(typeof data.redirect == 'object') {
 
                     window.location.href = data.redirect[0];
                 } else {
