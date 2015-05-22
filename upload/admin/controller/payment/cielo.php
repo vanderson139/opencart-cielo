@@ -644,8 +644,7 @@ class ControllerPaymentCielo extends Controller {
         $this->document->setTitle($this->language->get('heading_title'));
 
         $this->load->model('payment/cielo');
-        $this->load->library('cielo');
-
+        
         if ($this->validateCaptura()) {
 
             $order_cielo_ids = array();
@@ -754,8 +753,7 @@ class ControllerPaymentCielo extends Controller {
         $this->document->setTitle($this->language->get('heading_title'));
 
         $this->load->model('payment/cielo');
-        $this->load->library('cielo');
-
+        
         if ($this->validateCancelamento()) {
 
             $order_cielo_ids = array();

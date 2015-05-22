@@ -98,8 +98,6 @@ class ControllerPaymentCielo extends Controller {
 
 	public function processar() {
 
-        $this->load->library('cielo');
-
         $this->language->load('payment/cielo');
 
         $this->load->model('checkout/order');
@@ -424,8 +422,6 @@ class ControllerPaymentCielo extends Controller {
             return $this->response->redirect($this->url->link('common/home'));
         }
 
-        $this->load->library('cielo');
-
         $this->language->load('payment/cielo');
 
         $this->load->model('checkout/order');
@@ -506,6 +502,6 @@ class ControllerPaymentCielo extends Controller {
             }
         }
 
-        return $this->response->redirect($this->url->link('payment/cielo_message'));
+        return $this->response->redirect($this->url->link('checkout/failure));
     }
 }
