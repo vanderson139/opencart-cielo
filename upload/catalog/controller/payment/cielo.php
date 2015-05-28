@@ -165,7 +165,11 @@ class ControllerPaymentCielo extends Controller {
                 ->setDescricao('Compra na loja ' . $order_info['store_name'])
                 ->setIdioma(\Tritoq\Payment\Cielo\Pedido::IDIOMA_PORTUGUES)
                 ->setNumero($this->session->data['order_id'])
-                ->setValor(preg_replace('/[^0-9]/','',$valor_total));
+                ->setValor(preg_replace('/[^0-9]/','',number_format($valor_total,2)));
+
+            if($this->config->get('cielo_teste') == '1') {
+                $pedido->setValor(preg_replace('/[^0-9]/','',ceil($valor_total) . '00'));
+            }
 
             $portador = new \Tritoq\Payment\Cielo\Portador();
             $portador
