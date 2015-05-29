@@ -325,7 +325,7 @@ class ControllerPaymentCielo extends Controller {
                     $errors = $requisicao->getErrors();
 
                     if(!empty($errors)) {
-                        $this->error = array_merge($this->error, $errors);
+                        $this->error = array_merge((array)$this->error, $errors);
                     }
                 }
             }
@@ -503,6 +503,10 @@ class ControllerPaymentCielo extends Controller {
             }
 
             $requisicao = current($requisicoes);
+
+            if(is_array($requisicao)) {
+                $requisicao = current($requisicao);
+            }
 
             $xmlRetorno = $requisicao->getXmlRetorno();
             $data = $this->model_payment_cielo->parseData($xmlRetorno);

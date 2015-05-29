@@ -267,9 +267,6 @@ class Requisicao
         // Mostrar o corpo da requisição
         curl_setopt($_curl, CURLOPT_NOBODY, 0);
 
-        // Seguir redirecionamentos
-        curl_setopt($_curl, CURLOPT_FOLLOWLOCATION, 1);
-
         // Abrindo a url
         curl_setopt($_curl, CURLOPT_URL, $this->url);
 
@@ -293,7 +290,7 @@ class Requisicao
             curl_setopt($_curl, CURLOPT_SSL_VERIFYHOST, 2);
 
             // informa a localização do certificado para verificação com o peer
-            curl_setopt($_curl, CURLOPT_CAINFO, $ssl);
+            //curl_setopt($_curl, CURLOPT_CAINFO, $ssl);
             curl_setopt($_curl, CURLOPT_SSLVERSION, $this->sslVersion);
         }
 

@@ -371,7 +371,7 @@ class Transacao
      */
     public function getRequisicoes($type = null)
     {
-        if (isset($type)) {
+        if (isset($this->_requisicoes[$type])) {
             switch ($type) {
                 case self::REQUISICAO_TIPO_AUTORIZACAO:
                 case self::REQUISICAO_TIPO_CANCELA:
