@@ -475,6 +475,21 @@ class ControllerPaymentCielo extends Controller {
 
             if($transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_AUTORIZADA) {
                 $situacao = 'Autorizada';
+                $comentario = "Situação: ". $situacao ."<br />";
+                $comentario .= " Pedido: ". $order_id ."<br />";
+                $comentario .= " TID: ". (string)$transacao->getTid() ."<br />";
+                $comentario .= " Parcelado em: ". (string)$transacao->getParcelas() ."x";
+
+                $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('cielo_aprovado_id'), $comentario, true);
+            } else {
+                $situacao = 'Não Autorizada';
+
+                $comentario = "Situação: ". $situacao ."<br />";
+                $comentario .= " Pedido: ". $order_id ."<br />";
+                $comentario .= " TID: ". (string)$transacao->getTid() ."<br />";
+                $comentario .= " Parcelado em: ". (string)$transacao->getParcelas() ."x";
+
+                $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('cielo_nao_capturado_id'), $comentario, true);
             }
 
             if($this->config->get('cielo_captura') && $transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_AUTORIZADA) {
@@ -483,14 +498,14 @@ class ControllerPaymentCielo extends Controller {
 
             if($transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_CAPTURADA) {
                 $situacao = 'Capturada';
+
+                $comentario = "Situação: ". $situacao ."<br />";
+                $comentario .= " Pedido: ". $order_id ."<br />";
+                $comentario .= " TID: ". (string)$transacao->getTid() ."<br />";
+                $comentario .= " Parcelado em: ". (string)$transacao->getParcelas() ."x";
+
+                $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('cielo_capturado_id'), $comentario, true);
             }
-
-            $comentario = "Situação: ". $situacao ."<br />";
-            $comentario .= " Pedido: ". $order_id ."<br />";
-            $comentario .= " TID: ". (string)$transacao->getTid() ."<br />";
-            $comentario .= " Parcelado em: ". (string)$transacao->getParcelas() ."x";
-
-            $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('cielo_aprovado_id'), $comentario, true);
 
             $requisicoes = $transacao->getRequisicoes(\Tritoq\Payment\Cielo\Transacao::REQUISICAO_TIPO_TRANSACAO);
 
