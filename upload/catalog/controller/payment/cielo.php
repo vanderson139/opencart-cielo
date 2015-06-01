@@ -113,7 +113,7 @@ class ControllerPaymentCielo extends Controller {
 
             $loja = new \Tritoq\Payment\Cielo\Loja();
             $loja
-                ->setNomeLoja($order_info['store_name'])
+                ->setNomeLoja(substr($order_info['store_name'],0,13))
                 ->setAmbiente(\Tritoq\Payment\Cielo\Loja::AMBIENTE_PRODUCAO)
                 ->setUrlRetorno($this->url->link('payment/cielo/callback'))
                 ->setChave($this->config->get('cielo_chave'))
