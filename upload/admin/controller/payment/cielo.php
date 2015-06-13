@@ -307,10 +307,10 @@ class ControllerPaymentCielo extends Controller {
         $data['entry_cartao_discover'] = $this->language->get('entry_cartao_discover');
         $data['entry_cartao_elo'] = $this->language->get('entry_cartao_elo');
         $data['entry_cartao_amex'] = $this->language->get('entry_cartao_amex');
-        $data['entry_parcelas'] = $this->language->get('entry_parcelas');
-        $data['entry_cartao_minimo'] = $this->language->get('entry_cartao_minimo');
-        $data['entry_cartao_semjuros'] = $this->language->get('entry_cartao_semjuros');
-        $data['entry_cartao_juros'] = $this->language->get('entry_cartao_juros');
+        $data['entry_parcela_maximo'] = $this->language->get('entry_parcela_maximo');
+        $data['entry_parcela_minimo'] = $this->language->get('entry_parcela_minimo');
+        $data['entry_parcela_semjuros'] = $this->language->get('entry_parcela_semjuros');
+        $data['entry_parcela_juros'] = $this->language->get('entry_parcela_juros');
         $data['entry_aprovado'] = $this->language->get('entry_aprovado');
         $data['entry_nao_aprovado'] = $this->language->get('entry_nao_aprovado');
         $data['entry_capturado'] = $this->language->get('entry_capturado');
@@ -347,22 +347,28 @@ class ControllerPaymentCielo extends Controller {
             $data['error_chave'] = '';
         }
 
-        if (isset($this->error['cielo_cartao_semjuros'])) {
-            $data['error_cartao_semjuros'] = $this->error['cielo_cartao_semjuros'];
+        if (isset($this->error['cielo_parcela_maximo'])) {
+            $data['error_parcela_maximo'] = $this->error['cielo_parcela_maximo'];
         } else {
-            $data['error_cartao_semjuros'] = '';
+            $data['error_parcela_maximo'] = '';
         }
 
-        if (isset($this->error['cielo_cartao_juros'])) {
-            $data['error_cartao_juros'] = $this->error['cielo_cartao_juros'];
+        if (isset($this->error['cielo_parcela_semjuros'])) {
+            $data['error_parcela_semjuros'] = $this->error['cielo_parcela_semjuros'];
         } else {
-            $data['error_cartao_juros'] = '';
+            $data['error_parcela_semjuros'] = '';
         }
 
-        if (isset($this->error['cielo_cartao_minimo'])) {
-            $data['error_cartao_minimo'] = $this->error['cielo_cartao_minimo'];
+        if (isset($this->error['cielo_parcela_juros'])) {
+            $data['error_parcela_juros'] = $this->error['cielo_parcela_juros'];
         } else {
-            $data['error_cartao_minimo'] = '';
+            $data['error_parcela_juros'] = '';
+        }
+
+        if (isset($this->error['cielo_parcela_minimo'])) {
+            $data['error_parcela_minimo'] = $this->error['cielo_parcela_minimo'];
+        } else {
+            $data['error_parcela_minimo'] = '';
         }
 
         $data['breadcrumbs'] = array();
@@ -455,64 +461,28 @@ class ControllerPaymentCielo extends Controller {
             $data['cielo_cartao_amex'] =  $this->config->get('cielo_cartao_amex');
         }
 
-        if (isset($this->request->post['cielo_visa_parcelas'])) {
-            $data['cielo_visa_parcelas'] = $this->request->post['cielo_visa_parcelas'];
+        if (isset($this->request->post['cielo_parcela_maximo'])) {
+            $data['cielo_parcela_maximo'] = $this->request->post['cielo_parcela_maximo'];
         } else {
-            $data['cielo_visa_parcelas'] =  $this->config->get('cielo_visa_parcelas');
+            $data['cielo_parcela_maximo'] =  $this->config->get('cielo_parcela_maximo');
         }
 
-        if (isset($this->request->post['cielo_visae_parcelas'])) {
-            $data['cielo_visae_parcelas'] = $this->request->post['cielo_visae_parcelas'];
+        if (isset($this->request->post['cielo_parcela_semjuros'])) {
+            $data['cielo_parcela_semjuros'] = $this->request->post['cielo_parcela_semjuros'];
         } else {
-            $data['cielo_visae_parcelas'] =  $this->config->get('cielo_visae_parcelas');
+            $data['cielo_parcela_semjuros'] = $this->config->get('cielo_parcela_semjuros');
         }
 
-        if (isset($this->request->post['cielo_mastercard_parcelas'])) {
-            $data['cielo_mastercard_parcelas'] = $this->request->post['cielo_mastercard_parcelas'];
+        if (isset($this->request->post['cielo_parcela_minimo'])) {
+            $data['cielo_parcela_minimo'] = $this->request->post['cielo_parcela_minimo'];
         } else {
-            $data['cielo_mastercard_parcelas'] =  $this->config->get('cielo_mastercard_parcelas');
+            $data['cielo_parcela_minimo'] = $this->config->get('cielo_parcela_minimo');
         }
 
-        if (isset($this->request->post['cielo_diners_parcelas'])) {
-            $data['cielo_diners_parcelas'] = $this->request->post['cielo_diners_parcelas'];
+        if (isset($this->request->post['cielo_parcela_juros'])) {
+            $data['cielo_parcela_juros'] = $this->request->post['cielo_parcela_juros'];
         } else {
-            $data['cielo_diners_parcelas'] =  $this->config->get('cielo_diners_parcelas');
-        }
-
-        if (isset($this->request->post['cielo_discover_parcelas'])) {
-            $data['cielo_discover_parcelas'] = $this->request->post['cielo_discover_parcelas'];
-        } else {
-            $data['cielo_discover_parcelas'] =  $this->config->get('cielo_discover_parcelas');
-        }
-
-        if (isset($this->request->post['cielo_elo_parcelas'])) {
-            $data['cielo_elo_parcelas'] = $this->request->post['cielo_elo_parcelas'];
-        } else {
-            $data['cielo_elo_parcelas'] =  $this->config->get('cielo_elo_parcelas');
-        }
-
-        if (isset($this->request->post['cielo_amex_parcelas'])) {
-            $data['cielo_amex_parcelas'] = $this->request->post['cielo_amex_parcelas'];
-        } else {
-            $data['cielo_amex_parcelas'] =  $this->config->get('cielo_amex_parcelas');
-        }
-
-        if (isset($this->request->post['cielo_cartao_semjuros'])) {
-            $data['cielo_cartao_semjuros'] = $this->request->post['cielo_cartao_semjuros'];
-        } else {
-            $data['cielo_cartao_semjuros'] = $this->config->get('cielo_cartao_semjuros');
-        }
-
-        if (isset($this->request->post['cielo_cartao_minimo'])) {
-            $data['cielo_cartao_minimo'] = $this->request->post['cielo_cartao_minimo'];
-        } else {
-            $data['cielo_cartao_minimo'] = $this->config->get('cielo_cartao_minimo');
-        }
-
-        if (isset($this->request->post['cielo_cartao_juros'])) {
-            $data['cielo_cartao_juros'] = $this->request->post['cielo_cartao_juros'];
-        } else {
-            $data['cielo_cartao_juros'] = $this->config->get('cielo_cartao_juros');
+            $data['cielo_parcela_juros'] = $this->config->get('cielo_parcela_juros');
         }
 
         if (isset($this->request->post['cielo_autorizacao'])) {
@@ -597,16 +567,16 @@ class ControllerPaymentCielo extends Controller {
             $this->error['cielo_chave'] = $this->language->get('error_chave');
         }
 
-        if (!$this->request->post['cielo_cartao_semjuros']) {
-            $this->error['cielo_cartao_semjuros'] = $this->language->get('error_cartao_semjuros');
+        if (!$this->request->post['cielo_parcela_semjuros']) {
+            $this->error['cielo_parcela_semjuros'] = $this->language->get('error_parcela_semjuros');
         }
 
-        if (!$this->request->post['cielo_cartao_juros']) {
-            $this->error['cielo_cartao_juros'] = $this->language->get('error_cartao_juros');
+        if (!$this->request->post['cielo_parcela_juros']) {
+            $this->error['cielo_parcela_juros'] = $this->language->get('error_parcela_juros');
         }
 
-        if (!isset($this->request->post['cielo_cartao_minimo']) || $this->request->post['cielo_cartao_minimo'] < 5) {
-            $this->error['cielo_cartao_minimo'] = $this->language->get('error_cartao_minimo');
+        if (!isset($this->request->post['cielo_parcela_minimo']) || $this->request->post['cielo_parcela_minimo'] < 5) {
+            $this->error['cielo_parcela_minimo'] = $this->language->get('error_cartao_minimo');
         }
 
         return !$this->error;

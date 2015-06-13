@@ -10,5 +10,6 @@ $_['error_pedido']   = 'Houve um erro ao finalizar sua compra. Tente novamente.'
 $_['error_bandeira'] = 'Selecione a bandeira do cartão utilizado.';
 $_['error_nome']     = 'Informe seu nome completo. Como está escrito no cartão.';
 $_['error_numero']   = 'Informe o número do cartão.';
+$_['error_cartao']   = 'O cartão informado é inválido.';
 $_['error_cod_seg']  = 'Informe o código de segurança do cartão.';
 $_['error_validade'] = 'Informe a validade do cartão.';

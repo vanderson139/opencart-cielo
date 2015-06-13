@@ -323,8 +323,8 @@ class Requisicao
             }
 
             // Se a resposta tiver uma tag de erro
-            if (!empty($this->xmlRetorno->erro)) {
-                $this->errors[] = $this->xmlRetorno->erro;
+            if (!empty($this->xmlRetorno->mensagem)) {
+                $this->errors[] = utf8_decode((string)$this->xmlRetorno->mensagem);
             }
 
         } else {

@@ -90,10 +90,6 @@
                                 <?php } ?>
                             </select>
                         </div>
-                        <label class="col-sm-2 control-label" for="input-cartao-visa-parcelas"><?php echo $entry_parcelas; ?></label>
-                        <div class="col-sm-4">
-                            <input type="text" name="cielo_visa_parcelas" id="input-cartao-visa-parcelas" class="form-control" value="<?php echo $cielo_visa_parcelas ?>"/>
-                        </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label" for="input-cartao-mastercard"><?php echo $entry_cartao_mastercard; ?></label>
@@ -110,10 +106,6 @@
                                 <option value="0"><?php echo $text_no; ?></option>
                                 <?php } ?>
                             </select>
-                        </div>
-                        <label class="col-sm-2 control-label" for="input-cartao-mastercard-parcelas"><?php echo $entry_parcelas; ?></label>
-                        <div class="col-sm-4">
-                            <input type="text" name="cielo_mastercard_parcelas" id="input-cartao-mastercard-parcelas" class="form-control" value="<?php echo $cielo_mastercard_parcelas ?>"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -132,10 +124,6 @@
                                 <?php } ?>
                             </select>
                         </div>
-                        <label class="col-sm-2 control-label" for="input-cartao-diners-parcelas"><?php echo $entry_parcelas; ?></label>
-                        <div class="col-sm-4">
-                            <input type="text" name="cielo_diners_parcelas" id="input-cartao-diners-parcelas" class="form-control" value="<?php echo $cielo_diners_parcelas ?>"/>
-                        </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label" for="input-cartao-discover"><?php echo $entry_cartao_discover; ?></label>
@@ -152,10 +140,6 @@
                                 <option value="0"><?php echo $text_no; ?></option>
                                 <?php } ?>
                             </select>
-                        </div>
-                        <label class="col-sm-2 control-label" for="input-cartao-discover-parcelas"><?php echo $entry_parcelas; ?></label>
-                        <div class="col-sm-4">
-                            <input type="text" name="cielo_discover_parcelas" id="input-cartao-discover-parcelas" class="form-control" value="<?php echo $cielo_discover_parcelas ?>"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -174,10 +158,6 @@
                                 <?php } ?>
                             </select>
                         </div>
-                        <label class="col-sm-2 control-label" for="input-cartao-elo-parcelas"><?php echo $entry_parcelas; ?></label>
-                        <div class="col-sm-4">
-                            <input type="text" name="cielo_elo_parcelas" id="input-cartao-elo-parcelas" class="form-control" value="<?php echo $cielo_elo_parcelas ?>"/>
-                        </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label" for="input-cartao-amex"><?php echo $entry_cartao_amex; ?></label>
@@ -195,35 +175,40 @@
                                 <?php } ?>
                             </select>
                         </div>
-                        <label class="col-sm-2 control-label" for="input-cartao-amex-parcelas"><?php echo $entry_parcelas; ?></label>
-                        <div class="col-sm-4">
-                            <input type="text" name="cielo_amex_parcelas" id="input-cartao-amex-parcelas" class="form-control" value="<?php echo $cielo_amex_parcelas ?>"/>
-                        </div>
                     </div>
                     <div class="form-group required">
-                        <label class="col-sm-2 control-label" for="input-cartao-semjuros"><?php echo $entry_cartao_semjuros; ?></label>
+                        <label class="col-sm-2 control-label" for="input-parcela-maximo"><?php echo $entry_parcela_maximo; ?></label>
                         <div class="col-sm-4">
-                            <input type="text" name="cielo_cartao_semjuros" id="input-cartao-semjuros" class="form-control" value="<?php echo $cielo_cartao_semjuros ?>"/>
-                            <?php if ($error_cartao_semjuros) { ?>
-                            <div class="text-danger"><?php echo $error_cartao_semjuros; ?></div>
+                            <input type="text" name="cielo_parcela_maximo" id="input-parcela-maximo" class="form-control" value="<?php echo $cielo_parcela_maximo ?>"/>
+                            <?php if ($error_parcela_maximo) { ?>
+                            <div class="text-danger"><?php echo $error_parcela_maximo; ?></div>
                             <?php } ?>
                         </div>
                     </div>
                     <div class="form-group required">
-                        <label class="col-sm-2 control-label" for="input-cartao-minimo"><?php echo $entry_cartao_minimo; ?></label>
+                        <label class="col-sm-2 control-label" for="input-parcela-semjuros"><?php echo $entry_parcela_semjuros; ?></label>
                         <div class="col-sm-4">
-                            <input type="text" name="cielo_cartao_minimo" id="input-cartao-minimo" class="form-control" value="<?php echo $cielo_cartao_minimo ?>"/>
-                            <?php if ($error_cartao_minimo) { ?>
-                            <div class="text-danger"><?php echo $error_cartao_minimo; ?></div>
+                            <input type="text" name="cielo_parcela_semjuros" id="input-parcela-semjuros" class="form-control" value="<?php echo $cielo_parcela_semjuros ?>"/>
+                            <?php if ($error_parcela_semjuros) { ?>
+                            <div class="text-danger"><?php echo $error_parcela_semjuros; ?></div>
                             <?php } ?>
                         </div>
                     </div>
                     <div class="form-group required">
-                        <label class="col-sm-2 control-label" for="input-cartao-juros"><?php echo $entry_cartao_juros; ?></label>
+                        <label class="col-sm-2 control-label" for="input-parcela-minimo"><?php echo $entry_parcela_minimo; ?></label>
                         <div class="col-sm-4">
-                            <input type="text" name="cielo_cartao_juros" id="input-cartao-juros" class="form-control" value="<?php echo $cielo_cartao_juros ?>"/>
-                            <?php if ($error_cartao_juros) { ?>
-                            <div class="text-danger"><?php echo $error_cartao_juros; ?></div>
+                            <input type="text" name="cielo_parcela_minimo" id="input-parcela-minimo" class="form-control" value="<?php echo $cielo_parcela_minimo ?>"/>
+                            <?php if ($error_parcela_minimo) { ?>
+                            <div class="text-danger"><?php echo $error_parcela_minimo; ?></div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                    <div class="form-group required">
+                        <label class="col-sm-2 control-label" for="input-parcela-juros"><?php echo $entry_parcela_juros; ?></label>
+                        <div class="col-sm-4">
+                            <input type="text" name="cielo_parcela_juros" id="input-parcela-juros" class="form-control" value="<?php echo $cielo_parcela_juros ?>"/>
+                            <?php if ($error_parcela_juros) { ?>
+                            <div class="text-danger"><?php echo $error_parcela_juros; ?></div>
                             <?php } ?>
                         </div>
                     </div>
