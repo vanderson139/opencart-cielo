@@ -290,7 +290,7 @@ class Requisicao
             curl_setopt($_curl, CURLOPT_SSL_VERIFYHOST, 2);
 
             // informa a localização do certificado para verificação com o peer
-            //curl_setopt($_curl, CURLOPT_CAINFO, $ssl);
+            curl_setopt($_curl, CURLOPT_CAINFO, $ssl);
             curl_setopt($_curl, CURLOPT_SSLVERSION, $this->sslVersion);
         }
 
@@ -323,8 +323,8 @@ class Requisicao
             }
 
             // Se a resposta tiver uma tag de erro
-            if (!empty($this->xmlRetorno->mensagem)) {
-                $this->errors[] = utf8_decode((string)$this->xmlRetorno->mensagem);
+            if ($this->xmlRetorno->getName() == 'erro') {
+                $this->errors[] = $this->xmlRetorno;
             }
 
         } else {

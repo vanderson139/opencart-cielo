@@ -404,7 +404,9 @@ class ControllerPaymentCielo extends Controller {
                         $errors = $requisicao->getErrors();
 
                         if ( ! empty($errors)) {
-                            $this->error = array_merge((array)$this->error, $errors);
+                            foreach($errors as $error) {
+                                $this->error[] = utf8_decode((string)$error->mensagem);
+                            }
                         }
                     }
                 }
