@@ -9,6 +9,8 @@
                         <add position="after"><![CDATA[
                             $this->language->load('payment/cielo');
 
+                            $data['cielo_status'] = $this->registry->get('config')->get('cielo_status');
+
                             $data['text_cielo_configure'] = $this->language->get('text_cielo_configure');             
                             $data['text_cielo_transactions'] = $this->language->get('text_cielo_transactions');           
 
