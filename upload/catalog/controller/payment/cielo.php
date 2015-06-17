@@ -44,6 +44,8 @@ class ControllerPaymentCielo extends Controller {
 
         $this->language->load('payment/cielo');
 
+        $this->load->model('checkout/order');
+
         $data['text_barra'] = $this->language->get('text_barra');
         $data['text_teste'] = $this->language->get('text_teste');
         $data['text_pagamento'] = $this->language->get('text_pagamento');
