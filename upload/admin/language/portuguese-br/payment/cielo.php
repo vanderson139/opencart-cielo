@@ -5,6 +5,7 @@ $_['heading_title']              = 'Cielo';
 $_['button_view']              = 'Ver Pedido';
 $_['button_customer']              = 'Ver Cliente';
 $_['button_captura']              = 'Capturar';
+$_['button_edit']              = 'Configurar';
 
 // Text 
 $_['text_payment']               = 'Formas de Pagamento';

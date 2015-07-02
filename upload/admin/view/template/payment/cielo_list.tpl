@@ -3,7 +3,7 @@
   <div class="page-header">
     <div class="container-fluid">
       <div class="pull-right">
-        <a href="<?php echo $edit; ?>" title="<?php echo $button_edit; ?>" class="btn btn-default"><i class="fa fa-cog"></i></a>
+        <a href="<?php echo $edit; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-default"><i class="fa fa-cog"></i></a>
         <button type="submit" form="form-order-cielo" formaction="<?php echo $captura; ?>" data-toggle="tooltip" title="<?php echo $button_captura; ?>" class="btn btn-primary"><i class="fa fa-credit-card"></i></button>
         <button type="button" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-danger" onclick="confirm('<?php echo $text_confirm; ?>') ? $('#form-order-cielo').submit() : false;"><i class="fa fa-trash-o"></i></button>
       </div>

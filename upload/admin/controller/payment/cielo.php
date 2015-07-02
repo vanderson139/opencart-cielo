@@ -170,6 +170,7 @@ class ControllerPaymentCielo extends Controller {
         $data['button_captura'] = $this->language->get('button_captura');
         $data['button_cancel'] = $this->language->get('button_cancel');
         $data['button_filter'] = $this->language->get('button_filter');
+        $data['button_edit'] = $this->language->get('button_edit');
 
         $data['token'] = $this->session->data['token'];
 
@@ -576,7 +577,7 @@ class ControllerPaymentCielo extends Controller {
         }
 
         if (!isset($this->request->post['cielo_parcela_minimo']) || $this->request->post['cielo_parcela_minimo'] < 5) {
-            $this->error['cielo_parcela_minimo'] = $this->language->get('error_cartao_minimo');
+            $this->error['cielo_parcela_minimo'] = $this->language->get('error_parcela_minimo');
         }
 
         return !$this->error;
