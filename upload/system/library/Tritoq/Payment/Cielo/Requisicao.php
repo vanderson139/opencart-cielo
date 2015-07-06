@@ -323,8 +323,10 @@ class Requisicao
             }
 
             // Se a resposta tiver uma tag de erro
-            if ($this->xmlRetorno->getName() == 'erro') {
+            if (!empty($this->xmlRetorno) && $this->xmlRetorno->getName() == 'erro') {
                 $this->errors[] = $this->xmlRetorno;
+            } else if(empty($this->xmlRetorno)) {
+                $this->errors[] = 'ERRO: Retorno vazio, verifique o caminho e a versão do certificado SSL!';
             }
 
         } else {
@@ -334,4 +336,4 @@ class Requisicao
 
         return $this;
     }
-} 
+}
