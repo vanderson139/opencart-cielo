@@ -326,7 +326,7 @@ class Requisicao
             if (!empty($this->xmlRetorno) && $this->xmlRetorno->getName() == 'erro') {
                 $this->errors[] = $this->xmlRetorno;
             } else if(empty($this->xmlRetorno)) {
-                $this->errors[] = 'ERRO: Retorno vazio, verifique o caminho e a versão do certificado SSL!';
+                $this->errors[] = 'ERRO: Retorno vazio, verifique o caminho e a vers&atilde;o do certificado SSL!';
             }
 
         } else {
