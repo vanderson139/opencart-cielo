@@ -218,7 +218,7 @@ class ControllerPaymentCielo extends Controller {
                         if ($this->config->get('cielo_parcelamento') == \Tritoq\Payment\Cielo\Transacao::PRODUTO_PARCELADO_LOJA) {
 
                             $valor_total = $this->juroComposto($valor_total, $this->request->post["formaPagamento"],
-                                                               $this->config->get('cielo_cartao_juros'));
+                                                               $this->config->get('cielo_parcela_juros'));
                         }
                     }
                 }
@@ -444,11 +444,11 @@ class ControllerPaymentCielo extends Controller {
 
         $valor = str_replace(',','',number_format($order_info['total'],2));
 
-        $parcelas_sem_juros = $this->config->get('cielo_cartao_semjuros');
+        $parcelas_sem_juros = $this->config->get('cielo_parcela_semjuros');
 
-        $juros = $this->config->get('cielo_cartao_juros');
+        $juros = $this->config->get('cielo_parcela_juros');
 
-        $parcela_minima = $this->config->get('cielo_cartao_minimo');
+        $parcela_minima = $this->config->get('cielo_parcela_minimo');
 
         $parcelamento = '';
         $info = '';
