@@ -158,18 +158,6 @@ class ControllerPaymentCielo extends Controller {
                 $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
                 $valor_total = $order_info['total'];
 
-                $cielo_taxas = $this->config->get('cielo_taxas');
-
-                if ( ! empty($cielo_taxas)) {
-                    foreach ($cielo_taxas as $taxa) {
-                        if ($taxa['parcelas'] == $this->request->post["formaPagamento"]) {
-                            $this->model_checkout_order->setTaxaPagamento($this->session->data['order_id'],
-                                                                          (float)$taxa['valor'], $taxa['tipo']);
-                            break;
-                        }
-                    }
-                }
-
                 $loja = new \Tritoq\Payment\Cielo\Loja();
                 $loja
                     ->setNomeLoja(substr($order_info['store_name'], 0, 13))
@@ -200,6 +188,10 @@ class ControllerPaymentCielo extends Controller {
                     ->setCapturar(\Tritoq\Payment\Cielo\Transacao::CAPTURA_SIM)
                     ->setParcelas(1)
                     ->setProduto(\Tritoq\Payment\Cielo\Transacao::PRODUTO_CREDITO_AVISTA);
+
+                if ($this->config->get('cielo_teste') == '1') {
+                    $transacao->setAutorizar(\Tritoq\Payment\Cielo\Transacao::AUTORIZAR_SEM_AUTENTICACAO);
+                }
 
                 if ( ! $this->config->get('cielo_captura')) {
 
@@ -366,8 +358,8 @@ class ControllerPaymentCielo extends Controller {
                     $requisicao = current($requisicoes);
 
                     if(is_array($requisicao)) {
-		                $requisicao = current($requisicao);
-		            }
+                        $requisicao = current($requisicao);
+                    }
 
                     $xmlRetorno = $requisicao->getXmlRetorno();
                     $data = $this->model_payment_cielo->parseData($xmlRetorno);
@@ -385,8 +377,8 @@ class ControllerPaymentCielo extends Controller {
                         $requisicao = current($requisicoes);
 
                         if(is_array($requisicao)) {
-			                $requisicao = current($requisicao);
-			            }
+                            $requisicao = current($requisicao);
+                        }
 
                         $xmlRetorno = $requisicao->getXmlRetorno();
                         $data = $this->model_payment_cielo->parseData($xmlRetorno);
@@ -400,8 +392,8 @@ class ControllerPaymentCielo extends Controller {
 
                         $requisicao = current($requisicoes);
                         if(is_array($requisicao)) {
-			                $requisicao = current($requisicao);
-			            }
+                            $requisicao = current($requisicao);
+                        }
 
                         $errors = $requisicao->getErrors();
 
