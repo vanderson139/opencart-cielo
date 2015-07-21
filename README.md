@@ -21,4 +21,4 @@ Instalação:
 
 - Preencha as configurações e ative o módulo
 
-[![alt tag](https://www.paypalobjects.com/pt_BR/BR/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5R4RW3RXRNUR2)
+[![alt tag](https://www.paypalobjects.com/pt_BR/BR/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5R4RW3RXRNUR2)[![alt tag](https://p.simg.uol.com.br/out/pagseguro/i/botoes/doacoes/120x53-doar.gif)](https://pagseguro.uol.com.br/checkout/v2/donation.html?receiverEmail=vandersonlopes@yahoo.com.br&currency=BRL)
