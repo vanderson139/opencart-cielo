@@ -609,7 +609,13 @@ class ControllerPaymentCielo extends Controller {
 
             $this->model_payment_cielo->addTransaction($data);
 
-            return $this->response->redirect($this->url->link('checkout/success'));
+            if(!in_array($transacao->getStatus(), array(
+                \Tritoq\Payment\Cielo\Transacao::STATUS_CRIADA,
+                \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTENTICADA,
+                \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTORIZADA,
+            ))) {
+                return $this->response->redirect($this->url->link('checkout/success'));
+            }
         }
 
         return $this->response->redirect($this->url->link('checkout/failure'));
