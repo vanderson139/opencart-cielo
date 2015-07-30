@@ -610,6 +610,7 @@ class ControllerPaymentCielo extends Controller {
             $this->model_payment_cielo->addTransaction($data);
 
             if(!in_array($transacao->getStatus(), array(
+                \Tritoq\Payment\Cielo\Transacao::STATUS_ERRO,
                 \Tritoq\Payment\Cielo\Transacao::STATUS_CRIADA,
                 \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTENTICADA,
                 \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTORIZADA,
