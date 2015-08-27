@@ -132,7 +132,7 @@ jQuery('#payment-form').submit(function(event) {
                 $form.find('.form-group').removeClass('error').removeClass('has-error');
 
                 jQuery.each(data.error, function (i, m) {
-                    var $input = jQuery('input[name="' + i + '"],select[name="' + i + '"]');
+                    var $input = jQuery('input[type="text"][name="' + i + '"],select[name="' + i + '"]');
                     var $container = $input.parents('.form-group');
 
                     $input.parent().append('<span class="help-inline">' + m + '</span>');
@@ -142,6 +142,8 @@ jQuery('#payment-form').submit(function(event) {
                         jQuery('#payment-form').prepend('<div class="alert alert-danger"><p>'+ m +'</p></div>');
                     }
                 });
+
+                $form.find('input[type="text"],select').val('').change();
 
             } else if(!!data.redirect) {
 

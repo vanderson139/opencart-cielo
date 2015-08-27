@@ -8,6 +8,7 @@ $_['text_info']      = 'Importante: Mesmo no caso de pagamento em várias parcel
 
 $_['error_pedido']   = 'Houve um erro ao finalizar sua compra. Tente novamente.';
 $_['error_bandeira'] = 'Selecione a bandeira do cartão utilizado.';
+$_['error_pagamento'] = 'Selecione uma forma de pagamento.';
 $_['error_nome']     = 'Informe seu nome completo. Como está escrito no cartão.';
 $_['error_numero']   = 'Informe o número do cartão.';
 $_['error_cartao']   = 'O cartão informado é inválido.';

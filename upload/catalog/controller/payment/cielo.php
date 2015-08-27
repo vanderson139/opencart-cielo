@@ -397,6 +397,16 @@ class ControllerPaymentCielo extends Controller {
 
                         $errors = $requisicao->getErrors();
 
+                        $xmlRetorno = $requisicao->getXmlRetorno();
+
+                        if(isset($xmlRetorno->autorizacao->mensagem) && (string)$xmlRetorno->autorizacao->mensagem != '') {
+                            $this->error[] = utf8_decode((string)$xmlRetorno->autorizacao->mensagem);
+                        }
+
+                        if(isset($xmlRetorno->autenticacao->mensagem) && (string)$xmlRetorno->autenticacao->mensagem != '') {
+                            $this->error[] = utf8_decode((string)$xmlRetorno->autenticacao->mensagem);
+                        }
+
                         if ( ! empty($errors)) {
                             foreach($errors as $error) {
                                 $this->error[] = isset($error->mensagem) ? utf8_decode((string)$error->mensagem) : $error;
