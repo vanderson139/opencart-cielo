@@ -30,6 +30,15 @@ class ControllerPaymentCielo extends Controller {
         ),
     );
 
+    private function isOk($status) {
+    	return !empty($status) && !in_array($status, array(
+                \Tritoq\Payment\Cielo\Transacao::STATUS_ERRO,
+                \Tritoq\Payment\Cielo\Transacao::STATUS_CRIADA,
+                \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTENTICADA,
+                \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTORIZADA
+            ));
+    }
+
     private function juroComposto($capital, $tempo, $juros, $tipo = 0) {
         $m = $capital * pow((1 + ($juros / 100)), $tempo);
 
@@ -619,12 +628,7 @@ class ControllerPaymentCielo extends Controller {
 
             $this->model_payment_cielo->addTransaction($data);
 
-            if(!in_array($transacao->getStatus(), array(
-                \Tritoq\Payment\Cielo\Transacao::STATUS_ERRO,
-                \Tritoq\Payment\Cielo\Transacao::STATUS_CRIADA,
-                \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTENTICADA,
-                \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTORIZADA,
-            ))) {
+            if($this->isOk((int)$transacao->getStatus())) {
                 return $this->response->redirect($this->url->link('checkout/success'));
             }
         }
