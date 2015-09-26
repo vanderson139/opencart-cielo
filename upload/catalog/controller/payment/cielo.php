@@ -345,9 +345,7 @@ class ControllerPaymentCielo extends Controller {
 
                 $urlAutenticacao = (string)$transacao->getUrlAutenticacao();
 
-                if ($transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_AUTORIZADA
-                    || $transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_CAPTURADA
-                ) {
+                if ($this->isOk($transacao->getStatus())) {
 
                     $finalizacao = 'Aprovado';
 
