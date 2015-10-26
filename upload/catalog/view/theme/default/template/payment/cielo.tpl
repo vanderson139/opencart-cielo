@@ -77,7 +77,7 @@
         </div>
     </div>
 </div>
-
+<script type="text/javascript" src="catalog/view/javascript/jquery.payment/jquery.payment.js"></script>
 <script type="text/javascript">
 $('#creditcard_ccno').payment('formatCardNumber');
 jQuery(function () {
