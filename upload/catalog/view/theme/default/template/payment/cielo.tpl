@@ -85,6 +85,7 @@ $.fn.toggleInputError = function(erred) {
       };
       
 $('#creditcard_ccno').payment('formatCardNumber');
+$('#creditcard_cccvd').payment('formatCardCVC');
 $('#creditcard_ccno').focusout(function() {
    //Faz tratamento em tempo real, ao perder o foco e nao ao clicar no botao 
  
