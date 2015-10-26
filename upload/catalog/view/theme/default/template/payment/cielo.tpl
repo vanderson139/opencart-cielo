@@ -79,7 +79,7 @@
 </div>
 
 <script type="text/javascript">
-
+$('#creditcard_ccno').payment('formatCardNumber');
 jQuery(function () {
     jQuery('#creditcard_cctype').change(function() {
         $this = jQuery(this);
