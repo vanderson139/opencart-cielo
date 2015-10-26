@@ -145,17 +145,12 @@ jQuery('#payment-form').submit(function(event) {
 	if ((cardType) && ($('#creditcard_cctype').text())){
     if (cardType.toUpperCase() === $('#creditcard_cctype').text().toUpperCase()){
     //Compara cartao pra ver se foi digitado errado ou nao
-	console.log("comparou");
         }
 	}
 		if (!$.payment.validateCardNumber($('#creditcard_ccno').val())){
-			console.log("1");
 		return;
 		}
 		if (!$.payment.validateCardCVC($('#creditcard_cccvd').val(), cardType)){
-			console.log(cardType);
-			console.log("2");
-			console.log($('#creditcard_cccvd').val());
 		return;
 		}
         
