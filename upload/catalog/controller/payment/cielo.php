@@ -365,10 +365,10 @@ class ControllerPaymentCielo extends Controller {
                     $requisicoes
                         = $transacao->getRequisicoes(\Tritoq\Payment\Cielo\Transacao::REQUISICAO_TIPO_TRANSACAO);
 
-                    $requisicao = current($requisicoes);
+                    $requisicao = end($requisicoes);
 
                     if(is_array($requisicao)) {
-                        $requisicao = current($requisicao);
+                        $requisicao = end($requisicao);
                     }
 
                     $xmlRetorno = $requisicao->getXmlRetorno();
@@ -384,10 +384,10 @@ class ControllerPaymentCielo extends Controller {
                         $requisicoes
                             = $transacao->getRequisicoes(\Tritoq\Payment\Cielo\Transacao::REQUISICAO_TIPO_TRANSACAO);
 
-                        $requisicao = current($requisicoes);
+                        $requisicao = end($requisicoes);
 
                         if(is_array($requisicao)) {
-                            $requisicao = current($requisicao);
+                            $requisicao = end($requisicao);
                         }
 
                         $xmlRetorno = $requisicao->getXmlRetorno();
@@ -400,9 +400,9 @@ class ControllerPaymentCielo extends Controller {
                         $requisicoes
                             = $transacao->getRequisicoes(\Tritoq\Payment\Cielo\Transacao::REQUISICAO_TIPO_TRANSACAO);
 
-                        $requisicao = current($requisicoes);
+                        $requisicao = end($requisicoes);
                         if(is_array($requisicao)) {
-                            $requisicao = current($requisicao);
+                            $requisicao = end($requisicao);
                         }
 
                         $errors = $requisicao->getErrors();
@@ -618,10 +618,10 @@ class ControllerPaymentCielo extends Controller {
                 $requisicoes = $transacao->getRequisicoes(\Tritoq\Payment\Cielo\Transacao::REQUISICAO_TIPO_CONSULTA);
             }
 
-            $requisicao = current($requisicoes);
+            $requisicao = end($requisicoes);
 
             if(is_array($requisicao)) {
-                $requisicao = current($requisicao);
+                $requisicao = end($requisicao);
             }
 
             $xmlRetorno = $requisicao->getXmlRetorno();
