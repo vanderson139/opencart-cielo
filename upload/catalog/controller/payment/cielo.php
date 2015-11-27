@@ -31,11 +31,14 @@ class ControllerPaymentCielo extends Controller {
     );
 
     private function isOk($status) {
-    	return !empty($status) && !in_array($status, array(
+    	return !empty($status) && !in_array((int)$status, array(
                 \Tritoq\Payment\Cielo\Transacao::STATUS_ERRO,
+                \Tritoq\Payment\Cielo\Transacao::STATUS_EM_AUTENTICACAO,
+                \Tritoq\Payment\Cielo\Transacao::STATUS_EM_CANCELAMENTO,
+                \Tritoq\Payment\Cielo\Transacao::STATUS_ANDAMENTO,
                 \Tritoq\Payment\Cielo\Transacao::STATUS_CRIADA,
                 \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTENTICADA,
-                \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTORIZADA
+                \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTORIZADA,
             ));
     }
 
@@ -127,7 +130,7 @@ class ControllerPaymentCielo extends Controller {
 
             if (!isset($this->request->post['creditcard_ccno']) || trim($this->request->post['creditcard_ccno']) < 16) {
                 $this->error['creditcard_ccno'] = $this->language->get('error_numero');
-            } else if(!isset($this->_valida_cartao[$this->request->post['creditcard_cctype']]) || preg_match($this->_valida_cartao[$this->request->post['creditcard_cctype']]['regexp'], $this->request->post['creditcard_ccno']) === false) {
+            } else if(!isset($this->_valida_cartao[$this->request->post['creditcard_cctype']]) || !preg_match($this->_valida_cartao[$this->request->post['creditcard_cctype']]['regexp'], $this->request->post['creditcard_ccno'])) {
                 $this->error['creditcard_ccno'] = $this->language->get('error_cartao');
             }
 
@@ -345,7 +348,7 @@ class ControllerPaymentCielo extends Controller {
 
                 $urlAutenticacao = (string)$transacao->getUrlAutenticacao();
 
-                if ($this->isOk($transacao->getStatus())) {
+                if ($this->isOk((int)$transacao->getStatus())) {
 
                     $finalizacao = 'Aprovado';
 
@@ -567,7 +570,7 @@ class ControllerPaymentCielo extends Controller {
                 $service->doAutorizacao();
             }
 
-            if($transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_AUTORIZADA) {
+            if((int)$transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_AUTORIZADA) {
                 $situacao = 'Autorizada';
                 $comentario = "Situação: ". $situacao ."<br />";
                 $comentario .= " Pedido: ". $order_id ."<br />";
@@ -586,11 +589,11 @@ class ControllerPaymentCielo extends Controller {
                 $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('cielo_nao_capturado_id'), $comentario, true);
             }
 
-            if($this->config->get('cielo_captura') && $transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_AUTORIZADA) {
+            if($this->config->get('cielo_captura') && (int)$transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_AUTORIZADA) {
                 $service->doCaptura();
             }
 
-            if($transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_CAPTURADA) {
+            if((int)$transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_CAPTURADA) {
                 $situacao = 'Capturada';
 
                 $comentario = "Situação: ". $situacao ."<br />";
