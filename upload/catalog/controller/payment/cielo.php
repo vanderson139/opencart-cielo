@@ -589,8 +589,10 @@ class ControllerPaymentCielo extends Controller {
                 $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('cielo_nao_capturado_id'), $comentario, true);
             }
 
-            if($this->config->get('cielo_captura') && (int)$transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_AUTORIZADA) {
-                $service->doCaptura();
+            if(!in_array((int)$transacao->getStatus(), array(\Tritoq\Payment\Cielo\Transacao::STATUS_ANDAMENTO, \Tritoq\Payment\Cielo\Transacao::STATUS_CAPTURADA))
+                && $this->config->get('cielo_autorizacao') != \Tritoq\Payment\Cielo\Transacao::AUTORIZAR_NAO_AUTORIZAR) {
+
+                $service->doAutorizacao();
             }
 
             if((int)$transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_CAPTURADA) {
