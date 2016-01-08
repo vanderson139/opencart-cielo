@@ -170,7 +170,6 @@ class ControllerPaymentCielo extends Controller {
         $data['button_captura'] = $this->language->get('button_captura');
         $data['button_cancel'] = $this->language->get('button_cancel');
         $data['button_filter'] = $this->language->get('button_filter');
-        $data['button_edit'] = $this->language->get('button_edit');
 
         $data['token'] = $this->session->data['token'];
 
@@ -301,6 +300,8 @@ class ControllerPaymentCielo extends Controller {
         $data['help_chave'] = $this->language->get('help_chave');
         $data['entry_teste'] = $this->language->get('entry_teste');
         $data['help_teste'] = $this->language->get('help_teste');
+        $data['entry_avs'] = $this->language->get('entry_avs');
+        $data['entry_analise_risco'] = $this->language->get('entry_analise_risco');
         $data['entry_parcelamento'] = $this->language->get('entry_parcelamento');
         $data['entry_cartao_visa'] = $this->language->get('entry_cartao_visa');
         $data['entry_cartao_mastercard'] = $this->language->get('entry_cartao_mastercard');
@@ -418,6 +419,18 @@ class ControllerPaymentCielo extends Controller {
             $data['cielo_teste'] = $this->request->post['cielo_teste'];
         } else {
             $data['cielo_teste'] = $this->config->get('cielo_teste');
+        }
+
+        if (isset($this->request->post['cielo_avs'])) {
+            $data['cielo_avs'] = $this->request->post['cielo_avs'];
+        } else {
+            $data['cielo_avs'] = $this->config->get('cielo_avs');
+        }
+
+        if (isset($this->request->post['cielo_analise_risco'])) {
+            $data['cielo_analise_risco'] = $this->request->post['cielo_analise_risco'];
+        } else {
+            $data['cielo_analise_risco'] = $this->config->get('cielo_analise_risco');
         }
 
         if (isset($this->request->post['cielo_parcelamento'])) {
@@ -577,7 +590,7 @@ class ControllerPaymentCielo extends Controller {
         }
 
         if (!isset($this->request->post['cielo_parcela_minimo']) || $this->request->post['cielo_parcela_minimo'] < 5) {
-            $this->error['cielo_parcela_minimo'] = $this->language->get('error_parcela_minimo');
+            $this->error['cielo_parcela_minimo'] = $this->language->get('error_cartao_minimo');
         }
 
         return !$this->error;
@@ -586,10 +599,6 @@ class ControllerPaymentCielo extends Controller {
     private function validateCancelamento() {
         if (!$this->user->hasPermission('modify', 'payment/cielo')) {
             $this->error['warning'] = $this->language->get('error_permission');
-        }
-
-        if (!isset($this->request->post['selected']) && !isset($this->request->get['order_cielo_id'])) {
-            $this->error['warning'] = $this->language->get('error_order_cielo_id');
         }
 
         return !$this->error;
@@ -638,7 +647,7 @@ class ControllerPaymentCielo extends Controller {
                 $loja->setAmbiente(\Tritoq\Payment\Cielo\Loja::AMBIENTE_PRODUCAO)
                      ->setChave($this->config->get('cielo_chave'))
                      ->setNumeroLoja($this->config->get('cielo_afiliacao'))
-                     ->setSslCertificado(DIR_SYSTEM . 'library/Tritoq/Payment/Cielo/ssl/ecommerce.cielo.com.br.cer');
+                     ->setSslCertificado(DIR_SYSTEM . 'library/Tritoq/Payment/Cielo/ssl/ecommerce.cielo.com.br.crt');
 
                 if($this->config->get('cielo_teste') == '1') {
 
@@ -721,83 +730,9 @@ class ControllerPaymentCielo extends Controller {
 
     public function cancela() {
 
-        $this->load->library('cielo');
-
-        $this->load->language('payment/cielo');
-
-        $this->document->setTitle($this->language->get('heading_title'));
-
-        $this->load->model('payment/cielo');
-
         if ($this->validateCancelamento()) {
 
-            $order_cielo_ids = array();
-
-            if(isset($this->request->post['selected'])) {
-                $order_cielo_ids = $this->request->post['selected'];
-            } else if(isset($this->request->get['order_cielo_id'])) {
-                $order_cielo_ids = array($this->request->get['order_cielo_id']);
-            }
-
-            foreach($order_cielo_ids as $id) {
-                $transacao_info = $this->model_payment_cielo->getTransaction($id);
-
-                $transacao = new \Tritoq\Payment\Cielo\Transacao();
-                $transacao->setTid($transacao_info['tid']);
-
-                $loja = new \Tritoq\Payment\Cielo\Loja();
-                $loja->setAmbiente(\Tritoq\Payment\Cielo\Loja::AMBIENTE_PRODUCAO)
-                     ->setChave($this->config->get('cielo_chave'))
-                     ->setNumeroLoja($this->config->get('cielo_afiliacao'))
-                     ->setSslCertificado(DIR_SYSTEM . 'library/Tritoq/Payment/Cielo/ssl/ecommerce.cielo.com.br.cer');
-
-                if($this->config->get('cielo_teste') == '1') {
-
-                    $loja->setAmbiente(\Tritoq\Payment\Cielo\Loja::AMBIENTE_TESTE)
-                         ->setChave(\Tritoq\Payment\Cielo\Loja::LOJA_CHAVE_AMBIENTE_TESTE)
-                         ->setNumeroLoja(\Tritoq\Payment\Cielo\Loja::LOJA_NUMERO_AMBIENTE_TESTE);
-                }
-
-                $service = new \Tritoq\Payment\Cielo\CieloService(array(
-                                                                      'loja' => $loja,
-                                                                      'transacao' => $transacao,
-                                                                  ));
-
-                // Setando o tipo de versão de conexão SSL
-                $service->setSslVersion(4);
-
-                $service->doCancela();
-
-                if($transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_CANCELADA) {
-
-                    $requisicoes = $transacao->getRequisicoes(\Tritoq\Payment\Cielo\Transacao::REQUISICAO_TIPO_CANCELA);
-
-                    foreach($requisicoes as $requisicao) {
-
-                        $xmlRetorno = $requisicao->getXmlRetorno();
-                        $data = $this->model_payment_cielo->parseData($xmlRetorno);
-
-                        $this->model_payment_cielo->updateTransaction($id, $data);
-                        $this->addOrderHistory($transacao_info['pedido_numero'], $this->config->get('cielo_cancelado_id'), $data['cancelamento_mensagem'], true);
-                    }
-
-                    $this->session->data['success'] = $this->language->get('text_success');
-                } else {
-
-                    $requisicoes = $transacao->getRequisicoes(\Tritoq\Payment\Cielo\Transacao::REQUISICAO_TIPO_CANCELA);
-
-                    foreach($requisicoes as $requisicao) {
-
-                        $errors = $requisicao->getErrors();
-
-                        if(!empty($errors)) {
-                            $this->error = array_merge($this->error, $errors);
-                        }
-                    }
-                }
-            }
-
-            $this->session->data['success'] = $this->language->get('text_success');
+            $this->chargeback();
 
             $url = '';
 
@@ -829,6 +764,113 @@ class ControllerPaymentCielo extends Controller {
         }
 
         $this->getList();
+    }
+
+    public function chargeback($valor = 0) {
+
+        $this->load->library('cielo');
+
+        $this->load->language('payment/cielo');
+
+        $this->document->setTitle($this->language->get('heading_title'));
+
+        $this->load->model('payment/cielo');
+
+        if ($this->validateCancelamento()) {
+
+            $valor = preg_replace('/[^0-9]/', '',$valor);
+
+            $order_cielo_ids = array();
+
+            if(isset($this->request->get['order_id'])) {
+
+                $transactions = $this->model_payment_cielo->getTransactions(array('filter_order_id' => $this->request->get['order_id']));
+
+                if(!empty($transactions)) {
+                    foreach($transactions as $t) {
+                        if(in_array($t['cielo_status'], array(\Tritoq\Payment\Cielo\Transacao::STATUS_CAPTURADA, \Tritoq\Payment\Cielo\Transacao::STATUS_CANCELADA))) {
+                            $order_cielo_ids[] = $t['order_cielo_id'];
+                        }
+                    }
+                }
+
+            } else if(isset($this->request->post['selected'])) {
+                $order_cielo_ids = $this->request->post['selected'];
+            } else if(isset($this->request->get['order_cielo_id'])) {
+                $order_cielo_ids = array($this->request->get['order_cielo_id']);
+            }
+
+            foreach($order_cielo_ids as $id) {
+                $transacao_info = $this->model_payment_cielo->getTransaction($id);
+
+                $transacao = new \Tritoq\Payment\Cielo\Transacao();
+                $transacao->setTid($transacao_info['tid']);
+
+                $loja = new \Tritoq\Payment\Cielo\Loja();
+                $loja->setAmbiente(\Tritoq\Payment\Cielo\Loja::AMBIENTE_PRODUCAO)
+                     ->setChave($this->config->get('cielo_chave'))
+                     ->setNumeroLoja($this->config->get('cielo_afiliacao'))
+                     ->setSslCertificado(DIR_SYSTEM . 'library/Tritoq/Payment/Cielo/ssl/ecommerce.cielo.com.br.crt');
+
+                if($this->config->get('cielo_teste') == '1') {
+
+                    $loja->setAmbiente(\Tritoq\Payment\Cielo\Loja::AMBIENTE_TESTE)
+                         ->setChave(\Tritoq\Payment\Cielo\Loja::LOJA_CHAVE_AMBIENTE_TESTE)
+                         ->setNumeroLoja(\Tritoq\Payment\Cielo\Loja::LOJA_NUMERO_AMBIENTE_TESTE);
+                }
+
+                $service = new \Tritoq\Payment\Cielo\CieloService(array(
+                    'loja' => $loja,
+                    'transacao' => $transacao,
+                ));
+
+                // Setando o tipo de versão de conexão SSL
+                $service->setSslVersion(4);
+
+                $service->doCancela((int)$valor);
+
+                if(in_array($transacao->getStatus(), array(\Tritoq\Payment\Cielo\Transacao::STATUS_CANCELADA, \Tritoq\Payment\Cielo\Transacao::STATUS_CAPTURADA))) {
+
+                    $requisicoes = $transacao->getRequisicoes(\Tritoq\Payment\Cielo\Transacao::REQUISICAO_TIPO_CANCELA);
+
+                    foreach($requisicoes as $requisicao) {
+
+                        $xmlRetorno = $requisicao->getXmlRetorno();
+                        $data = $this->model_payment_cielo->parseData($xmlRetorno);
+
+                        $this->model_payment_cielo->updateTransaction($id, $data);
+
+                        if($transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_CANCELADA) {
+                            $this->addOrderHistory($transacao_info['pedido_numero'], $this->config->get('cielo_cancelado_id'), $data['cancelamento_mensagem'], true);
+                        } else {
+                            $this->addOrderHistory($transacao_info['pedido_numero'], $this->config->get('cielo_capturado_id'), $data['cancelamento_mensagem'], true);
+                        }
+
+                        $this->session->data['success'] = $data['cancelamento_mensagem'];
+                    }
+                } else {
+
+                    $requisicoes = $transacao->getRequisicoes(\Tritoq\Payment\Cielo\Transacao::REQUISICAO_TIPO_CANCELA);
+
+                    foreach($requisicoes as $requisicao) {
+
+                        $errors = $requisicao->getErrors();
+
+                        if(!empty($errors)) {
+                            $this->error = array_merge($this->error, $errors);
+                        }
+                    }
+                }
+            }
+
+            if($this->error) {
+                $this->session->data['error'] = $this->error;
+            } else {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function addOrderHistory($order_id, $order_status_id, $comment, $notify = true) {

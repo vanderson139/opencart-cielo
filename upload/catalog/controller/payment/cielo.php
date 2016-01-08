@@ -31,15 +31,15 @@ class ControllerPaymentCielo extends Controller {
     );
 
     private function isOk($status) {
-    	return !empty($status) && !in_array((int)$status, array(
-                \Tritoq\Payment\Cielo\Transacao::STATUS_ERRO,
-                \Tritoq\Payment\Cielo\Transacao::STATUS_EM_AUTENTICACAO,
-                \Tritoq\Payment\Cielo\Transacao::STATUS_EM_CANCELAMENTO,
-                \Tritoq\Payment\Cielo\Transacao::STATUS_ANDAMENTO,
-                \Tritoq\Payment\Cielo\Transacao::STATUS_CRIADA,
-                \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTENTICADA,
-                \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTORIZADA,
-            ));
+        return !empty($status) && !in_array((int)$status, array(
+            \Tritoq\Payment\Cielo\Transacao::STATUS_ERRO,
+            \Tritoq\Payment\Cielo\Transacao::STATUS_EM_AUTENTICACAO,
+            \Tritoq\Payment\Cielo\Transacao::STATUS_EM_CANCELAMENTO,
+            \Tritoq\Payment\Cielo\Transacao::STATUS_ANDAMENTO,
+            \Tritoq\Payment\Cielo\Transacao::STATUS_CRIADA,
+            \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTENTICADA,
+            \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTORIZADA,
+        ));
     }
 
     private function juroComposto($capital, $tempo, $juros, $tipo = 0) {
@@ -56,8 +56,6 @@ class ControllerPaymentCielo extends Controller {
 
         $this->language->load('payment/cielo');
 
-        $this->load->model('checkout/order');
-
         $data['text_barra'] = $this->language->get('text_barra');
         $data['text_teste'] = $this->language->get('text_teste');
         $data['text_pagamento'] = $this->language->get('text_pagamento');
@@ -71,8 +69,9 @@ class ControllerPaymentCielo extends Controller {
         $data['action'] = $this->url->link('payment/cielo/processar', '', 'SSL');
 
         $order_info  = $this->model_checkout_order->getOrder($this->session->data['order_id']);
-        $valor_total = number_format($order_info['total'],2);
-        $data['valor_total'] = str_replace(".","",$valor_total);
+        $valor_total = number_format((float)$order_info['total'],2);
+        $valor_total = str_replace(",","",$valor_total);
+        $data['total'] = $this->currency->format((float)$valor_total);
 
         $data['cartoes'] = array();
 
@@ -120,6 +119,8 @@ class ControllerPaymentCielo extends Controller {
     }
 
     protected function validar() {
+        $this->request->post['creditcard_ccno'] = preg_replace('/\s*/', '', $this->request->post['creditcard_ccno']);
+
         if (!isset($this->request->post['formaPagamento'])) {
             $this->error['formaPagamento'] = $this->language->get('error_pagamento');
         }
@@ -127,7 +128,6 @@ class ControllerPaymentCielo extends Controller {
         if (!isset($this->request->post['creditcard_cctype']) || utf8_strlen(trim($this->request->post['creditcard_cctype'])) < 1) {
             $this->error['creditcard_cctype'] = $this->language->get('error_bandeira');
         } else {
-
             if (!isset($this->request->post['creditcard_ccno']) || trim($this->request->post['creditcard_ccno']) < 16) {
                 $this->error['creditcard_ccno'] = $this->language->get('error_numero');
             } else if(!isset($this->_valida_cartao[$this->request->post['creditcard_cctype']]) || !preg_match($this->_valida_cartao[$this->request->post['creditcard_cctype']]['regexp'], $this->request->post['creditcard_ccno'])) {
@@ -177,7 +177,7 @@ class ControllerPaymentCielo extends Controller {
                     ->setUrlRetorno($this->url->link('payment/cielo/callback'))
                     ->setChave($this->config->get('cielo_chave'))
                     ->setNumeroLoja($this->config->get('cielo_afiliacao'))
-                    ->setSslCertificado(DIR_SYSTEM . 'library/Tritoq/Payment/Cielo/ssl/ecommerce.cielo.com.br.cer');
+                    ->setSslCertificado(DIR_SYSTEM . 'library/Tritoq/Payment/Cielo/ssl/ecommerce.cielo.com.br.crt');
 
                 if ($this->config->get('cielo_teste') == '1') {
 
@@ -201,10 +201,6 @@ class ControllerPaymentCielo extends Controller {
                     ->setParcelas(1)
                     ->setProduto(\Tritoq\Payment\Cielo\Transacao::PRODUTO_CREDITO_AVISTA);
 
-                if ($this->config->get('cielo_teste') == '1') {
-                    $transacao->setAutorizar(\Tritoq\Payment\Cielo\Transacao::AUTORIZAR_SEM_AUTENTICACAO);
-                }
-
                 if ( ! $this->config->get('cielo_captura')) {
 
                     $transacao->setCapturar(\Tritoq\Payment\Cielo\Transacao::CAPTURA_NAO);
@@ -212,6 +208,7 @@ class ControllerPaymentCielo extends Controller {
 
                 if ($this->request->post["formaPagamento"] == 'A') {
                     $transacao->setProduto(\Tritoq\Payment\Cielo\Transacao::PRODUTO_DEBITO);
+                    $transacao->setAutorizar(\Tritoq\Payment\Cielo\Transacao::AUTORIZAR_SOMENTE_AUTENTICADA);
 
                 } else {
                     if ($this->request->post["formaPagamento"] != '1') {
@@ -227,6 +224,11 @@ class ControllerPaymentCielo extends Controller {
                     }
                 }
 
+                if ($this->config->get('cielo_teste') == '1') {
+                    $transacao->setAutorizar(\Tritoq\Payment\Cielo\Transacao::AUTORIZAR_SEM_AUTENTICACAO);
+                }
+
+
                 $pedido = new \Tritoq\Payment\Cielo\Pedido();
                 $pedido
                     ->setDataHora(new \DateTime())
@@ -239,13 +241,19 @@ class ControllerPaymentCielo extends Controller {
                     $pedido->setValor(preg_replace('/[^0-9]/', '', ceil($valor_total) . '00'));
                 }
 
+                $this->load->model('account/customer');
+                $this->load->model('account/address');
+
+                $customer_info = $this->model_account_customer->getCustomer($order_info['customer_id']);
+                $customer_address_info = $this->model_account_address->getAddress($customer_info['address_id']);
+
                 $portador = new \Tritoq\Payment\Cielo\Portador();
                 $portador
-                    ->setBairro($order_info['payment_address_2'])
-                    ->setCep($order_info['payment_postcode'])
-                    ->setEndereco($order_info['payment_address_1']);
+                    ->setBairro($customer_address_info['address_2'])
+                    ->setCep(preg_replace('/[^0-9]/', '', $customer_address_info['postcode']))
+                    ->setEndereco($customer_address_info['address_1']);
 
-                if ($this->config->get('cielo_analise') == '1') {
+                if ($this->config->get('cielo_analise_risco') == '1') {
 
                     $country_code = $this->model_payment_cielo->getCountryCodeById($order_info['payment_country_id']);
                     $zone_code = $this->model_payment_cielo->getZoneCodeById($order_info['payment_zone_id']);
@@ -253,38 +261,30 @@ class ControllerPaymentCielo extends Controller {
                     $pedidoAnalise = new \Tritoq\Payment\Cielo\AnaliseRisco\PedidoAnaliseRisco();
                     $pedidoAnalise
                         ->setEstado($zone_code)
-                        ->setCep($order_info['payment_postcode'])
+                        ->setCep(preg_replace('/[^0-9]/', '', $order_info['payment_postcode']))
                         ->setCidade($order_info['payment_city'])
                         ->setEndereco($order_info['payment_address_1'])
-                        ->setId($this->request->post['pedido'])
+                        ->setId($this->session->data['order_id'])
                         ->setPais($country_code)
-                        ->setPrecoTotal(str_replace(',', '.', $valor_total));
+                        ->setPrecoTotal($valor_total);
 
-                    if ($order_info['shipping_country_id'] != $order_info['payment_country_id']) {
-
-                        $country_code
-                            = $this->model_payment_cielo->getCountryCodeById($order_info['shipping_country_id']);
-                    }
-
-                    if ($order_info['shipping_zone_id'] != $order_info['payment_zone_id']) {
-
-                        $zone_code = $this->model_payment_cielo->getZoneCodeById($order_info['shipping_zone_id']);
-                    }
+                    $country_code = $this->model_payment_cielo->getCountryCodeById($customer_address_info['country_id']);
+                    $zone_code = $this->model_payment_cielo->getZoneCodeById($customer_address_info['zone_id']);
 
                     $cliente = new \Tritoq\Payment\Cielo\AnaliseRisco\ClienteAnaliseRisco();
-                    $cliente->nome = $order_info['firstname'];
-                    $cliente->sobrenome = $order_info['lastname'];
-                    $cliente->endereco = $order_info['shuipping_address_1'];
+                    $cliente->nome = $customer_info['firstname'];
+                    $cliente->sobrenome = $customer_info['lastname'];
+                    $cliente->endereco = $customer_address_info['address_1'];
                     $cliente->complemento = '';
-                    $cliente->cep = $order_info['shipping_postcode'];
+                    $cliente->cep = preg_replace('/[^0-9]/', '', $customer_address_info['postcode']);
                     $cliente->documento = '';
-                    $cliente->email = $order_info['email'];
+                    $cliente->email = $customer_info['email'];
                     $cliente->estado = $zone_code;
-                    $cliente->cidade = $order_info['shipping_city'];
-                    $cliente->id = $this->customer->getId();
-                    $cliente->ip = $order_info['ip'];
+                    $cliente->cidade = $customer_address_info['city'];
+                    $cliente->id = $order_info['customer_id'];
+                    $cliente->ip = $order_info['forwarded_ip'];
                     $cliente->pais = $country_code;
-                    $cliente->telefone = $this->customer->getTelephone();
+                    $cliente->telefone = preg_replace('/[^0-9]/', '', $customer_info['telephone']);
 
                     /*
                     *
@@ -322,7 +322,7 @@ class ControllerPaymentCielo extends Controller {
                     $service->setHabilitarAnaliseRisco(true);
 
                     $gerarToken = false;
-                    $checkAvs = true;
+                    $checkAvs = $this->config->get('cielo_avs') == '1';
 
                 } else {
 
@@ -341,14 +341,16 @@ class ControllerPaymentCielo extends Controller {
                     $service->setHabilitarAnaliseRisco(false);
 
                     $gerarToken = false;
-                    $checkAvs = false;
+                    $checkAvs = $this->config->get('cielo_avs') == '1';
                 }
 
                 $service->doTransacao($gerarToken, $checkAvs);
 
                 $urlAutenticacao = (string)$transacao->getUrlAutenticacao();
 
-                if ($this->isOk((int)$transacao->getStatus())) {
+                if ((int)$transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_AUTORIZADA
+                    || (int)$transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_CAPTURADA
+                ) {
 
                     $finalizacao = 'Aprovado';
 
@@ -367,10 +369,6 @@ class ControllerPaymentCielo extends Controller {
 
                     $requisicao = end($requisicoes);
 
-                    if(is_array($requisicao)) {
-                        $requisicao = end($requisicao);
-                    }
-
                     $xmlRetorno = $requisicao->getXmlRetorno();
                     $data = $this->model_payment_cielo->parseData($xmlRetorno);
 
@@ -386,10 +384,6 @@ class ControllerPaymentCielo extends Controller {
 
                         $requisicao = end($requisicoes);
 
-                        if(is_array($requisicao)) {
-                            $requisicao = end($requisicao);
-                        }
-
                         $xmlRetorno = $requisicao->getXmlRetorno();
                         $data = $this->model_payment_cielo->parseData($xmlRetorno);
 
@@ -401,26 +395,24 @@ class ControllerPaymentCielo extends Controller {
                             = $transacao->getRequisicoes(\Tritoq\Payment\Cielo\Transacao::REQUISICAO_TIPO_TRANSACAO);
 
                         $requisicao = end($requisicoes);
-                        if(is_array($requisicao)) {
-                            $requisicao = end($requisicao);
-                        }
 
                         $errors = $requisicao->getErrors();
 
                         $xmlRetorno = $requisicao->getXmlRetorno();
+                        $data = $this->model_payment_cielo->parseData($xmlRetorno);
+
+                        $this->model_payment_cielo->addTransaction($data);
 
                         if(isset($xmlRetorno->autorizacao->mensagem) && (string)$xmlRetorno->autorizacao->mensagem != '') {
-                            $this->error[] = utf8_decode((string)$xmlRetorno->autorizacao->mensagem);
+                            $this->error[] = (string)$xmlRetorno->autorizacao->mensagem;
                         }
 
                         if(isset($xmlRetorno->autenticacao->mensagem) && (string)$xmlRetorno->autenticacao->mensagem != '') {
-                            $this->error[] = utf8_decode((string)$xmlRetorno->autenticacao->mensagem);
+                            //$this->error[] = (string)$xmlRetorno->autenticacao->mensagem;
                         }
 
                         if ( ! empty($errors)) {
-                            foreach($errors as $error) {
-                                $this->error[] = isset($error->mensagem) ? utf8_decode((string)$error->mensagem) : $error;
-                            }
+                            $this->error = array_merge((array)$this->error, $errors);
                         }
                     }
                 }
@@ -466,13 +458,20 @@ class ControllerPaymentCielo extends Controller {
         $info = '';
 
         if (!empty($bandeira)) {
-            if ($this->config->get('cielo_parcelamento') == "2") {
-                $parcelamento .= '<div class="form-group">
-                                <label for="formaPagamento" class="col-sm-3 control-label">Valor</label>
-                                <div class="col-sm-9">
-                                    <select name="formaPagamento" class="form-control">
-                                        <option value="1">1x de '. number_format($valor, 2, ',', '.') .' sem juros</option>';
 
+            $debito = in_array($bandeira, array('visa', 'mastercard')) ? '<div class="radio"><label for="formaPagamento-A"><input type="radio" name="formaPagamento" id="formaPagamento-A" value="A"/> Débito de R$ '. number_format($valor, 2, ',', '.') .' à vista</label></div>' : '';
+
+            $parcelamento .= '<div class="row"><div class="col-sm-3"><img src="image/cielo/'. $bandeira .'.jpg"/></div><div class="col-sm-9">
+                                <div class="col-sm-6">
+                                '. $debito .'
+                                <div class="radio">
+                                <label for="formaPagamento-1">
+                                    <input type="radio" name="formaPagamento" id="formaPagamento-1" value="1"/>
+                                    Crédito em 1x de R$ '. number_format($valor, 2, ',', '.') .' sem juros
+                                </label>
+                                </div>';
+
+            if ($this->config->get('cielo_parcelamento') == "2") {
                 for ($p = 2; $p <= $maximo_parcelas; $p++) {
                     $valor_parcela = 0;
 
@@ -481,37 +480,35 @@ class ControllerPaymentCielo extends Controller {
                     }
 
                     if ($p > $parcelas_sem_juros) {
-                        $valor_parcela = $this->juroComposto($valor, $p, $juros, 1);
+                        $valor_parcela = ($valor * pow(1+($juros/100), $p))/$p;
                     }
 
                     if ($valor_parcela >= $parcela_minima) {
                         if ($p <= $parcelas_sem_juros) {
-                            $parcelamento .= '<option value="'. $p .'"> '. $p .'x de '. number_format($valor_parcela, 2, ',', '.') .' sem juros</option>';
+                            $parcelamento .= '<div class="radio"><label for="formaPagamento-'. $p .'"><input type="radio" name="formaPagamento" id="formaPagamento-'. $p .'" value="' . $p .'" /> Crédito em '. $p .'x de R$ '. number_format($valor_parcela, 2, ',', '.') .' sem juros</label></div>';
                         } else {
-                            $parcelamento .= '<option value="' . $p . '"> ' . $p . 'x de ' . number_format($valor_parcela, 2,',','.') . ' com juros</option>';
+                            $parcelamento .= '<div class="radio"><label for="formaPagamento-'. $p .'"><input type="radio" name="formaPagamento" id="formaPagamento-'. $p .'" value="' . $p .'" /> Crédito em '. $p .'x de R$ '. number_format($valor_parcela, 2, ',', '.') .' com juros</label></div>';
+                        }
+
+                        if($p % 3) {
+                            $parcelamento .= '</div><div class="col-sm-6">';
                         }
                     } else {
-                        $info .= '<span class="help-inline fixed-help">Parcela mínima de '. number_format($parcela_minima, 2, ',', '.') .'</span>';
+                        $info .= '<span class="help-inline fixed-help text-danger">Parcela mínima de '. number_format($parcela_minima, 2, ',', '.') .'</span>';
                         break;
                     }
                 }
                 if ($parcelas_sem_juros < $maximo_parcelas) {
                     $juros = number_format($juros, 2, ',', '.');
-                    $info .= '<span class="help-inline fixed-help">Juros de '. $juros .'% ao mês</span>';
+                    $info .= '<br><span class="help-inline fixed-help text-danger">Juros de '. $juros .'% ao mês</span>';
                 }
             } else if ($this->config->get('cielo_parcelamento') == "3") {
-                $parcelamento .= '<option value="1"> 1x de '. number_format($valor, 2, ',', '.') .' sem juros</option>';
-
                 for ($p = 2; $p <= $maximo_parcelas; $p++) {
-                    $parcelamento .= '<option value="' . $p . '"> '. $p .'x (o valor da parcela será consultado no próximo passo)</option>';
+                    $parcelamento .= '<div class="radio"><label for="formaPagamento-'. $p .'"><input type="radio" name="formaPagamento" id="formaPagamento-'. $p .'" value="' . $p .'" /> Crédito em '. $p .'x (o valor da parcela será consultado no próximo passo)</label></div>';
                 }
             }
 
-            if($bandeira == 'visa' || $bandeira == 'mastercard') {
-                $parcelamento .= '<optgroup label="Débito"><option value="A">1x Débito à vista</option></optgroup>';
-            }
-
-            $parcelamento .= '</select>' . $info . '</div></div>';
+            $parcelamento .= '</div></div></div><div class="row"><div class="col-xs-12"><div class="pull-left">' . $info . '</div></div></div>';
         }
 
         $this->response->setOutput($parcelamento);
@@ -541,7 +538,7 @@ class ControllerPaymentCielo extends Controller {
                  ->setUrlRetorno($this->url->link('payment/cielo/callback'))
                  ->setChave($this->config->get('cielo_chave'))
                  ->setNumeroLoja($this->config->get('cielo_afiliacao'))
-                 ->setSslCertificado(DIR_SYSTEM . 'library/Tritoq/Payment/Cielo/ssl/ecommerce.cielo.com.br.cer');
+                 ->setSslCertificado(DIR_SYSTEM . 'library/Tritoq/Payment/Cielo/ssl/ecommerce.cielo.com.br.crt');
 
             if($this->config->get('cielo_teste') == '1') {
 
@@ -563,9 +560,8 @@ class ControllerPaymentCielo extends Controller {
 
             $service->doConsulta();
 
-            $situacao = 'Autenticada';
-
-            if($this->config->get('cielo_autorizacao') != \Tritoq\Payment\Cielo\Transacao::AUTORIZAR_NAO_AUTORIZAR) {
+            if(!in_array((int)$transacao->getStatus(), array(\Tritoq\Payment\Cielo\Transacao::STATUS_ANDAMENTO, \Tritoq\Payment\Cielo\Transacao::STATUS_CAPTURADA, \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTORIZADA))
+                && $this->config->get('cielo_autorizacao') != \Tritoq\Payment\Cielo\Transacao::AUTORIZAR_NAO_AUTORIZAR) {
 
                 $service->doAutorizacao();
             }
@@ -589,10 +585,8 @@ class ControllerPaymentCielo extends Controller {
                 $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('cielo_nao_capturado_id'), $comentario, true);
             }
 
-            if(!in_array((int)$transacao->getStatus(), array(\Tritoq\Payment\Cielo\Transacao::STATUS_ANDAMENTO, \Tritoq\Payment\Cielo\Transacao::STATUS_CAPTURADA))
-                && $this->config->get('cielo_autorizacao') != \Tritoq\Payment\Cielo\Transacao::AUTORIZAR_NAO_AUTORIZAR) {
-
-                $service->doAutorizacao();
+            if($this->config->get('cielo_captura') && (int)$transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_AUTORIZADA) {
+                $service->doCaptura();
             }
 
             if((int)$transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_CAPTURADA) {

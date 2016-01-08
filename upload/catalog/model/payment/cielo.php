@@ -2,64 +2,64 @@
 class ModelPaymentCielo extends Model {
 
     public function getMethod($address, $total) {
-		$this->load->language('payment/cielo');
-		
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone_to_geo_zone WHERE geo_zone_id = '" . (int)$this->config->get('cielo_geo_zone_id') . "' AND country_id = '" . (int)$address['country_id'] . "' AND (zone_id = '" . (int)$address['zone_id'] . "' OR zone_id = '0')");
-		
-		if ($this->config->get('cielo_total') > $total) {
-			$status = false;
-		} elseif (!$this->config->get('cielo_geo_zone_id')) {
-			$status = true;
-		} elseif ($query->num_rows) {
-			$status = true;
-		} else {
-			$status = false;
-		}	
+    $this->load->language('payment/cielo');
 
-		$currencies = array(
-			'AUD',
-			'CAD',
-			'EUR',
-			'GBP',
-			'JPY',
-			'USD',
-			'NZD',
-			'CHF',
-			'HKD',
-			'SGD',
-			'SEK',
-			'DKK',
-			'PLN',
-			'NOK',
-			'HUF',
-			'CZK',
-			'ILS',
-			'MXN',
-			'MYR',
-			'BRL',
-			'PHP',
-			'TWD',
-			'THB',
-			'TRY'
-		);
-		
-		if (!in_array(strtoupper($this->currency->getCode()), $currencies)) {
-			$status = false;
-		}			
+    $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone_to_geo_zone WHERE geo_zone_id = '" . (int)$this->config->get('cielo_geo_zone_id') . "' AND country_id = '" . (int)$address['country_id'] . "' AND (zone_id = '" . (int)$address['zone_id'] . "' OR zone_id = '0')");
 
-		$method_data = array();
+    if ($this->config->get('cielo_total') > 0 && $this->config->get('cielo_total') > $total) {
+      $status = false;
+    } elseif (!$this->config->get('cielo_geo_zone_id')) {
+      $status = true;
+    } elseif ($query->num_rows) {
+      $status = true;
+    } else {
+      $status = false;
+    }
 
-		if ($status) {  
-      		$method_data = array( 
-        		'code'       => 'cielo',
-        		'title'      => $this->language->get('text_title'),
-        		'terms'      => '',
-				'sort_order' => $this->config->get('cielo_sort_order')
-      		);
-    	}
-   
-    	return $method_data;
-  	}
+    $currencies = array(
+      'AUD',
+      'CAD',
+      'EUR',
+      'GBP',
+      'JPY',
+      'USD',
+      'NZD',
+      'CHF',
+      'HKD',
+      'SGD',
+      'SEK',
+      'DKK',
+      'PLN',
+      'NOK',
+      'HUF',
+      'CZK',
+      'ILS',
+      'MXN',
+      'MYR',
+      'BRL',
+      'PHP',
+      'TWD',
+      'THB',
+      'TRY'
+    );
+
+    if (!in_array(strtoupper($this->currency->getCode()), $currencies)) {
+      $status = false;
+    }
+
+    $method_data = array();
+
+    if ($status) {
+          $method_data = array(
+            'code'       => 'cielo',
+            'title'      => $this->language->get('text_title'),
+            'terms'      => '',
+        'sort_order' => $this->config->get('cielo_sort_order')
+          );
+      }
+
+      return $method_data;
+    }
 
     public function getCountryCodeById($country_id) {
         $query = $this->db->query('SELECT iso_code_2 FROM '. DB_PREFIX . 'country WHERE country_id = ' . $country_id);
@@ -83,6 +83,8 @@ class ModelPaymentCielo extends Model {
     }
 
     public function addTransaction($data) {
+
+        if(empty($data['pedido_numero'])) return false;
 
         $this->db->query("INSERT INTO " . DB_PREFIX . "order_cielo (tid,pan,status,pedido_numero,pedido_valor,pedido_moeda,pedido_data,
                           pedido_idioma,pagamento_bandeira,pagamento_produto,pagamento_parcelas,autenticacao_codigo,

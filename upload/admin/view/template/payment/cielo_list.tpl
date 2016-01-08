@@ -145,7 +145,7 @@
   </div>
   <script type="text/javascript"><!--
 $('#button-filter').on('click', function() {
-	var url = 'index.php?route=payment/cielo&token=<?php echo $token; ?>';
+  var url = 'index.php?route=payment/cielo&token=<?php echo $token; ?>';
 
     var filter_order_id = $('input[name=\'filter_order_id\']').val();
 
@@ -155,38 +155,38 @@ $('#button-filter').on('click', function() {
 
     var filter_name = $('input[name=\'filter_name\']').val();
 
-	if (filter_name) {
-		url += '&filter_name=' + encodeURIComponent(filter_name);
-	}
+  if (filter_name) {
+    url += '&filter_name=' + encodeURIComponent(filter_name);
+  }
 
-	var filter_status = $('select[name=\'filter_status\']').val();
+  var filter_status = $('select[name=\'filter_status\']').val();
 
-	if (filter_status != '*') {
-		url += '&filter_status=' + encodeURIComponent(filter_status);
-	}
+  if (filter_status != '*') {
+    url += '&filter_status=' + encodeURIComponent(filter_status);
+  }
 
-	location = url;
+  location = url;
 });
-//--></script> 
+//--></script>
   <script type="text/javascript"><!--
 $('input[name=\'filter_name\']').autocomplete({
-	'source': function(request, response) {
-		$.ajax({
-			url: 'index.php?route=sale/customer/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request),
-			dataType: 'json',
-			success: function(json) {
-				response($.map(json, function(item) {
-					return {
-						label: item['name'] + ' ('+ item['email'] +')',
-						value: item['customer_id']
-					}
-				}));
-			}
-		});
-	},
-	'select': function(item) {
-		$('input[name=\'filter_name\']').val(item['label']);
-	}
+  'source': function(request, response) {
+    $.ajax({
+      url: 'index.php?route=sale/customer/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request),
+      dataType: 'json',
+      success: function(json) {
+        response($.map(json, function(item) {
+          return {
+            label: item['name'] + ' ('+ item['email'] +')',
+            value: item['customer_id']
+          }
+        }));
+      }
+    });
+  },
+  'select': function(item) {
+    $('input[name=\'filter_name\']').val(item['label']);
+  }
 });
 //--></script></div>
 <?php echo $footer; ?>

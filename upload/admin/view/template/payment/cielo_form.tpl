@@ -180,9 +180,6 @@
                         <label class="col-sm-2 control-label" for="input-parcela-maximo"><?php echo $entry_parcela_maximo; ?></label>
                         <div class="col-sm-4">
                             <input type="text" name="cielo_parcela_maximo" id="input-parcela-maximo" class="form-control" value="<?php echo $cielo_parcela_maximo ?>"/>
-                            <?php if ($error_parcela_maximo) { ?>
-                            <div class="text-danger"><?php echo $error_parcela_maximo; ?></div>
-                            <?php } ?>
                         </div>
                     </div>
                     <div class="form-group required">
@@ -228,7 +225,7 @@
                         <div class="col-sm-4">
                             <select name="cielo_captura" id="input-captura" class="form-control">
                                 <option value="1" <?php if ($cielo_captura == '1') { ?>selected="selected"<?php } ?> ><?php echo $text_yes; ?></option>
-                                <option value="0"><?php echo $text_no; ?></option>
+                                <option value="0" <?php if ($cielo_captura == '0') { ?>selected="selected"<?php } ?> ><?php echo $text_no; ?></option>
                             </select>
                         </div>
                     </div>
@@ -238,6 +235,24 @@
                             <select name="cielo_parcelamento" id="input-parcelamento" class="form-control">
                                 <option value="2" <?php if ($cielo_parcelamento == '2') { ?> selected="selected" <?php } ?> ><?php echo $text_loja; ?></option>
                                 <option value="3" <?php if ($cielo_parcelamento == '3') { ?> selected="selected" <?php } ?> ><?php echo $text_administradora; ?></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-analise-risco"><?php echo $entry_analise_risco; ?></label>
+                        <div class="col-sm-4">
+                            <select name="cielo_analise_risco" id="input-analise-risco" class="form-control">
+                                <option value="1" <?php if ($cielo_analise_risco == '1') { ?> selected="selected" <?php } ?> ><?php echo $text_yes; ?></option>
+                                <option value="0" <?php if ($cielo_analise_risco == '0') { ?> selected="selected" <?php } ?> ><?php echo $text_no; ?></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-avs"><?php echo $entry_avs; ?></label>
+                        <div class="col-sm-4">
+                            <select name="cielo_avs" id="input-avs" class="form-control">
+                                <option value="1" <?php if ($cielo_avs == '1') { ?> selected="selected" <?php } ?> ><?php echo $text_yes; ?></option>
+                                <option value="0" <?php if ($cielo_avs == '0') { ?> selected="selected" <?php } ?> ><?php echo $text_no; ?></option>
                             </select>
                         </div>
                     </div>
