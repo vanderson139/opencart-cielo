@@ -79,34 +79,43 @@
 </div>
 <script type="text/javascript" src="catalog/view/javascript/jquery.payment/jquery.payment.js"></script>
 <script type="text/javascript">
+    $.payment.cards.push({
+        type: 'elo',
+        patterns: [636368, 438935, 504175, 451416, 636297,5067,4576,4011,506699],
+        format: /(\d{1,4})/g,
+        length: [16],
+        cvcLength: [3],
+        luhn: true
+    });
+
 $.fn.toggleInputError = function(erred) {
-	   $(this).closest('.form-group').toggleClass('has-error', erred);
+       $(this).closest('.form-group').toggleClass('has-error', erred);
         return this;
       };
-      
+
 $('#creditcard_ccno').payment('formatCardNumber');
 $('#creditcard_cccvd').payment('formatCardCVC');
 $('#creditcard_ccno').focusout(function() {
-   //Faz tratamento em tempo real, ao perder o foco e nao ao clicar no botao 
- 
-  $('#creditcard_ccno').toggleInputError(!$.payment.validateCardNumber($('#creditcard_ccno').val())); 
-  
+   //Faz tratamento em tempo real, ao perder o foco e nao ao clicar no botao
+
+  $('#creditcard_ccno').toggleInputError(!$.payment.validateCardNumber($('#creditcard_ccno').val()));
+
   });
 $('#creditcard_cccvd').focusout(function() {
-   //Faz tratamento em tempo real, ao perder o foco e nao ao clicar no botao 
+   //Faz tratamento em tempo real, ao perder o foco e nao ao clicar no botao
     var cardType = $.payment.cardType($('#creditcard_ccno').val());
    $('#creditcard_cccvd').toggleInputError(!$.payment.validateCardCVC($('#creditcard_cccvd').val(), cardType));
   });
-  
+
   $("#creditcard_ccexpy").change(function(){
-	var mes = $( "#creditcard_ccexpm option:selected" ).text();
-	var ano = $( "#creditcard_ccexpy option:selected" ).text();
-	    $('#creditcard_ccexpy').toggleInputError(!$.payment.validateCardExpiry(mes, ano));
- 
+    var mes = $( "#creditcard_ccexpm option:selected" ).text();
+    var ano = $( "#creditcard_ccexpy option:selected" ).text();
+        $('#creditcard_ccexpy').toggleInputError(!$.payment.validateCardExpiry(mes, ano));
+
 
 });
 
-  
+
 jQuery(function () {
     jQuery('#creditcard_cctype').change(function() {
         $this = jQuery(this);
@@ -135,26 +144,26 @@ jQuery(function () {
 });
 
 
-      
+
 jQuery('#payment-form').submit(function(event) {
     event.preventDefault ? event.preventDefault() : event.returnValue = false;
 
 
 //Leonardo Pucci - Validando numeracao do cartao, cvv, vencimento etc sem ter que fazer post
     var cardType = $.payment.cardType($('#creditcard_ccno').val());
-	if ((cardType) && ($('#creditcard_cctype').text())){
+    if ((cardType) && ($('#creditcard_cctype').text())){
     if (cardType.toUpperCase() === $('#creditcard_cctype').text().toUpperCase()){
     //Compara cartao pra ver se foi digitado errado ou nao
         }
-	}
-		if (!$.payment.validateCardNumber($('#creditcard_ccno').val())){
-		return;
-		}
-		if (!$.payment.validateCardCVC($('#creditcard_cccvd').val(), cardType)){
-		return;
-		}
-        
-        
+    }
+        if (!$.payment.validateCardNumber($('#creditcard_ccno').val())){
+        return;
+        }
+        if (!$.payment.validateCardCVC($('#creditcard_cccvd').val(), cardType)){
+        return;
+        }
+
+
     var validade = jQuery('select[name="creditcard_ccexpy"]').val() + '' + jQuery('select[name="creditcard_ccexpm"]').val();
 
     jQuery.ajax({
