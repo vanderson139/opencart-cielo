@@ -272,6 +272,7 @@ class ControllerPaymentCielo extends Controller {
                     $zone_code = $this->model_payment_cielo->getZoneCodeById($customer_address_info['zone_id']);
 
                     $cliente = new \Tritoq\Payment\Cielo\AnaliseRisco\ClienteAnaliseRisco();
+                    $cliente->senha = '';
                     $cliente->nome = $customer_info['firstname'];
                     $cliente->sobrenome = $customer_info['lastname'];
                     $cliente->endereco = $customer_address_info['address_1'];
@@ -458,20 +459,13 @@ class ControllerPaymentCielo extends Controller {
         $info = '';
 
         if (!empty($bandeira)) {
-
-            $debito = in_array($bandeira, array('visa', 'mastercard')) ? '<div class="radio"><label for="formaPagamento-A"><input type="radio" name="formaPagamento" id="formaPagamento-A" value="A"/> Débito de R$ '. number_format($valor, 2, ',', '.') .' à vista</label></div>' : '';
-
-            $parcelamento .= '<div class="row"><div class="col-sm-3"><img src="image/cielo/'. $bandeira .'.jpg"/></div><div class="col-sm-9">
-                                <div class="col-sm-6">
-                                '. $debito .'
-                                <div class="radio">
-                                <label for="formaPagamento-1">
-                                    <input type="radio" name="formaPagamento" id="formaPagamento-1" value="1"/>
-                                    Crédito em 1x de R$ '. number_format($valor, 2, ',', '.') .' sem juros
-                                </label>
-                                </div>';
-
             if ($this->config->get('cielo_parcelamento') == "2") {
+                $parcelamento .= '<div class="form-group">
+                                <label for="formaPagamento" class="col-sm-3 control-label">Valor</label>
+                                <div class="col-sm-9">
+                                    <select name="formaPagamento" class="form-control">
+                                        <option value="1">1x de '. number_format($valor, 2, ',', '.') .' sem juros</option>';
+
                 for ($p = 2; $p <= $maximo_parcelas; $p++) {
                     $valor_parcela = 0;
 
@@ -480,35 +474,37 @@ class ControllerPaymentCielo extends Controller {
                     }
 
                     if ($p > $parcelas_sem_juros) {
-                        $valor_parcela = ($valor * pow(1+($juros/100), $p))/$p;
+                        $valor_parcela = $this->juroComposto($valor, $p, $juros, 1);
                     }
 
                     if ($valor_parcela >= $parcela_minima) {
                         if ($p <= $parcelas_sem_juros) {
-                            $parcelamento .= '<div class="radio"><label for="formaPagamento-'. $p .'"><input type="radio" name="formaPagamento" id="formaPagamento-'. $p .'" value="' . $p .'" /> Crédito em '. $p .'x de R$ '. number_format($valor_parcela, 2, ',', '.') .' sem juros</label></div>';
+                            $parcelamento .= '<option value="'. $p .'"> '. $p .'x de '. number_format($valor_parcela, 2, ',', '.') .' sem juros</option>';
                         } else {
-                            $parcelamento .= '<div class="radio"><label for="formaPagamento-'. $p .'"><input type="radio" name="formaPagamento" id="formaPagamento-'. $p .'" value="' . $p .'" /> Crédito em '. $p .'x de R$ '. number_format($valor_parcela, 2, ',', '.') .' com juros</label></div>';
-                        }
-
-                        if($p % 3) {
-                            $parcelamento .= '</div><div class="col-sm-6">';
+                            $parcelamento .= '<option value="' . $p . '"> ' . $p . 'x de ' . number_format($valor_parcela, 2,',','.') . ' com juros</option>';
                         }
                     } else {
-                        $info .= '<span class="help-inline fixed-help text-danger">Parcela mínima de '. number_format($parcela_minima, 2, ',', '.') .'</span>';
+                        $info .= '<span class="help-inline fixed-help">Parcela mínima de '. number_format($parcela_minima, 2, ',', '.') .'</span>';
                         break;
                     }
                 }
                 if ($parcelas_sem_juros < $maximo_parcelas) {
                     $juros = number_format($juros, 2, ',', '.');
-                    $info .= '<br><span class="help-inline fixed-help text-danger">Juros de '. $juros .'% ao mês</span>';
+                    $info .= '<span class="help-inline fixed-help">Juros de '. $juros .'% ao mês</span>';
                 }
             } else if ($this->config->get('cielo_parcelamento') == "3") {
+                $parcelamento .= '<option value="1"> 1x de '. number_format($valor, 2, ',', '.') .' sem juros</option>';
+
                 for ($p = 2; $p <= $maximo_parcelas; $p++) {
-                    $parcelamento .= '<div class="radio"><label for="formaPagamento-'. $p .'"><input type="radio" name="formaPagamento" id="formaPagamento-'. $p .'" value="' . $p .'" /> Crédito em '. $p .'x (o valor da parcela será consultado no próximo passo)</label></div>';
+                    $parcelamento .= '<option value="' . $p . '"> '. $p .'x (o valor da parcela será consultado no próximo passo)</option>';
                 }
             }
 
-            $parcelamento .= '</div></div></div><div class="row"><div class="col-xs-12"><div class="pull-left">' . $info . '</div></div></div>';
+            if($bandeira == 'visa' || $bandeira == 'mastercard') {
+                $parcelamento .= '<optgroup label="Débito"><option value="A">1x Débito à vista</option></optgroup>';
+            }
+
+            $parcelamento .= '</select>' . $info . '</div></div>';
         }
 
         $this->response->setOutput($parcelamento);

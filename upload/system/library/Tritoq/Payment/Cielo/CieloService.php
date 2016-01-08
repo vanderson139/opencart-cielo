@@ -917,4 +917,4 @@ class CieloService
     {
         return $this->transacao;
     }
-} 
+}

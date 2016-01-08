@@ -170,6 +170,8 @@ class ControllerPaymentCielo extends Controller {
         $data['button_captura'] = $this->language->get('button_captura');
         $data['button_cancel'] = $this->language->get('button_cancel');
         $data['button_filter'] = $this->language->get('button_filter');
+        $data['button_edit'] = $this->language->get('button_edit');
+
 
         $data['token'] = $this->session->data['token'];
 
