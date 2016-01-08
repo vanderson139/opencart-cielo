@@ -43,6 +43,9 @@ class ControllerPaymentCielo extends Controller {
     }
 
     private function juroComposto($capital, $tempo, $juros, $tipo = 0) {
+        $juros = !empty($juros) ? preg_replace('/[^0-9\s]+/', '.', $juros) : 0;
+        settype($juros, 'float');
+
         $m = $capital * pow((1 + ($juros / 100)), $tempo);
 
         if ($tipo == 0) {
@@ -154,7 +157,9 @@ class ControllerPaymentCielo extends Controller {
 
     public function processar() {
 
-        $this->load->library('cielo');
+        if(method_exists($this->load, 'library')) {
+            $this->load->library('cielo');
+        }
 
         $this->language->load('payment/cielo');
 
@@ -245,15 +250,16 @@ class ControllerPaymentCielo extends Controller {
                 $this->load->model('account/address');
 
                 $customer_info = $this->model_account_customer->getCustomer($order_info['customer_id']);
-                $customer_address_info = $this->model_account_address->getAddress($customer_info['address_id']);
 
                 $portador = new \Tritoq\Payment\Cielo\Portador();
                 $portador
-                    ->setBairro($customer_address_info['address_2'])
-                    ->setCep(preg_replace('/[^0-9]/', '', $customer_address_info['postcode']))
-                    ->setEndereco($customer_address_info['address_1']);
+                    ->setBairro($order_info['payment_address_2'])
+                    ->setCep(preg_replace('/[^0-9]/', '', $order_info['payment_postcode']))
+                    ->setEndereco($order_info['payment_address_1']);
 
-                if ($this->config->get('cielo_analise_risco') == '1') {
+                if ($this->config->get('cielo_analise_risco') == '1' && !empty($customer_info['address_id'])) {
+
+                    $customer_address_info = $this->model_account_address->getAddress($customer_info['address_id']);
 
                     $country_code = $this->model_payment_cielo->getCountryCodeById($order_info['payment_country_id']);
                     $zone_code = $this->model_payment_cielo->getZoneCodeById($order_info['payment_zone_id']);
@@ -488,7 +494,7 @@ class ControllerPaymentCielo extends Controller {
                 }
             }
             if ($parcelas_sem_juros < $maximo_parcelas) {
-                $juros = number_format($juros, 2, ',', '.');
+                $juros = !empty($juros) ? preg_replace('/[^0-9\s]+/', ',', $juros) : 0;
                 $info .= '<span class="help-inline fixed-help">Juros de '. $juros .'% ao mês</span>';
             }
 
@@ -508,7 +514,9 @@ class ControllerPaymentCielo extends Controller {
             return $this->response->redirect($this->url->link('common/home'));
         }
 
-        $this->load->library('cielo');
+        if(method_exists($this->load, 'library')) {
+            $this->load->library('cielo');
+        }
 
         $this->language->load('payment/cielo');
 

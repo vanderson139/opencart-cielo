@@ -621,7 +621,9 @@ class ControllerPaymentCielo extends Controller {
 
 
     public function captura() {
-        $this->load->library('cielo');
+        if(method_exists($this->load, 'library')) {
+            $this->load->library('cielo');
+        }
 
         $this->load->language('payment/cielo');
 
@@ -770,7 +772,9 @@ class ControllerPaymentCielo extends Controller {
 
     public function chargeback($valor = 0) {
 
-        $this->load->library('cielo');
+        if(method_exists($this->load, 'library')) {
+            $this->load->library('cielo');
+        }
 
         $this->load->language('payment/cielo');
 
