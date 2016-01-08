@@ -459,45 +459,37 @@ class ControllerPaymentCielo extends Controller {
         $info = '';
 
         if (!empty($bandeira)) {
-            if ($this->config->get('cielo_parcelamento') == "2") {
-                $parcelamento .= '<div class="form-group">
-                                <label for="formaPagamento" class="col-sm-3 control-label">Valor</label>
-                                <div class="col-sm-9">
-                                    <select name="formaPagamento" class="form-control">
-                                        <option value="1">1x de '. number_format($valor, 2, ',', '.') .' sem juros</option>';
+            $parcelamento .= '<div class="form-group">
+                            <label for="formaPagamento" class="col-sm-3 control-label">Valor</label>
+                            <div class="col-sm-9">
+                                <select name="formaPagamento" class="form-control">
+                                    <option value="1">1x de '. number_format($valor, 2, ',', '.') .' sem juros</option>';
 
-                for ($p = 2; $p <= $maximo_parcelas; $p++) {
-                    $valor_parcela = 0;
+            for ($p = 2; $p <= $maximo_parcelas; $p++) {
+                $valor_parcela = 0;
 
+                if ($p <= $parcelas_sem_juros) {
+                    $valor_parcela = $valor / $p;
+                }
+
+                if ($p > $parcelas_sem_juros) {
+                    $valor_parcela = $this->juroComposto($valor, $p, $juros, 1);
+                }
+
+                if ($valor_parcela >= $parcela_minima) {
                     if ($p <= $parcelas_sem_juros) {
-                        $valor_parcela = $valor / $p;
-                    }
-
-                    if ($p > $parcelas_sem_juros) {
-                        $valor_parcela = $this->juroComposto($valor, $p, $juros, 1);
-                    }
-
-                    if ($valor_parcela >= $parcela_minima) {
-                        if ($p <= $parcelas_sem_juros) {
-                            $parcelamento .= '<option value="'. $p .'"> '. $p .'x de '. number_format($valor_parcela, 2, ',', '.') .' sem juros</option>';
-                        } else {
-                            $parcelamento .= '<option value="' . $p . '"> ' . $p . 'x de ' . number_format($valor_parcela, 2,',','.') . ' com juros</option>';
-                        }
+                        $parcelamento .= '<option value="'. $p .'"> '. $p .'x de '. number_format($valor_parcela, 2, ',', '.') .' sem juros</option>';
                     } else {
-                        $info .= '<span class="help-inline fixed-help">Parcela mínima de '. number_format($parcela_minima, 2, ',', '.') .'</span>';
-                        break;
+                        $parcelamento .= '<option value="' . $p . '"> ' . $p . 'x de ' . number_format($valor_parcela, 2,',','.') . ' com juros</option>';
                     }
+                } else {
+                    $info .= '<span class="help-inline fixed-help">Parcela mínima de '. number_format($parcela_minima, 2, ',', '.') .'</span>';
+                    break;
                 }
-                if ($parcelas_sem_juros < $maximo_parcelas) {
-                    $juros = number_format($juros, 2, ',', '.');
-                    $info .= '<span class="help-inline fixed-help">Juros de '. $juros .'% ao mês</span>';
-                }
-            } else if ($this->config->get('cielo_parcelamento') == "3") {
-                $parcelamento .= '<option value="1"> 1x de '. number_format($valor, 2, ',', '.') .' sem juros</option>';
-
-                for ($p = 2; $p <= $maximo_parcelas; $p++) {
-                    $parcelamento .= '<option value="' . $p . '"> '. $p .'x (o valor da parcela será consultado no próximo passo)</option>';
-                }
+            }
+            if ($parcelas_sem_juros < $maximo_parcelas) {
+                $juros = number_format($juros, 2, ',', '.');
+                $info .= '<span class="help-inline fixed-help">Juros de '. $juros .'% ao mês</span>';
             }
 
             if($bandeira == 'visa' || $bandeira == 'mastercard') {
