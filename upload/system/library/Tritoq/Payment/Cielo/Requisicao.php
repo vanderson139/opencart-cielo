@@ -9,15 +9,15 @@ use Encoding;
 
 /**
  *
- * Representa√ß√£o de uma requisi√ß√£o/chamada de URL
+ * RepresentaÁ„o de uma requisiÁ„o/chamada de URL
  *
- * Ela √© respons√°vel por enviar e buscar as informa√ß√µes no webservice da Cielo
+ * Ela È respons·vel por enviar e buscar as informaÁıes no webservice da Cielo
  *
  *
  * Class Requisicao
  *
  * @category  Library
- * @copyright Artur Magalh√£es <nezkal@gmail.com>
+ * @copyright Artur Magalh„es <nezkal@gmail.com>
  * @package   Tritoq\Payment\Cielo
  * @license   GPL-3.0+
  */
@@ -33,7 +33,7 @@ class Requisicao
 
     /**
      *
-     * Objeto XML de Requisi√ß√£o
+     * Objeto XML de RequisiÁ„o
      *
      * @var \SimpleXMLElement
      */
@@ -78,7 +78,7 @@ class Requisicao
 
     /**
      *
-     * Vers√£o SSL da conex√£o
+     * Vers„o SSL da conex„o
      *
      * @var integer
      */
@@ -97,7 +97,7 @@ class Requisicao
 
     /**
      *
-     * Retorna se a requisi√ß√£o conteve algum erro
+     * Retorna se a requisiÁ„o conteve algum erro
      *
      * @return bool
      */
@@ -108,7 +108,7 @@ class Requisicao
 
     /**
      *
-     * Retorna os erros ocorridos na requisi√ß√£o
+     * Retorna os erros ocorridos na requisiÁ„o
      *
      * @return array
      */
@@ -119,7 +119,7 @@ class Requisicao
 
     /**
      *
-     * Retorna informa√ß√µes da Requisi√ß√£o
+     * Retorna informaÁıes da RequisiÁ„o
      *
      * @return array
      */
@@ -141,7 +141,7 @@ class Requisicao
 
     /**
      *
-     * Retorna em XML a resposta da requisi√ß√£o
+     * Retorna em XML a resposta da requisiÁ„o
      *
      * @return \SimpleXMLElement
      */
@@ -163,7 +163,7 @@ class Requisicao
 
     /**
      *
-     * Seta a URL que ser√° chamada
+     * Seta a URL que ser· chamada
      *
      * @param string $url
      *
@@ -175,7 +175,7 @@ class Requisicao
         $valida = filter_var($url, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED);
 
         if ($valida == false) {
-            throw new InvalidArgumentException('URL de retorno inv√°lida.');
+            throw new InvalidArgumentException('URL de retorno inv·lida.');
         }
 
         $this->url = $url;
@@ -195,7 +195,7 @@ class Requisicao
 
     /**
      *
-     * Seta o XML de requisi√ß√£o
+     * Seta o XML de requisiÁ„o
      *
      * @param \SimpleXMLElement $xmlRequisicao
      *
@@ -209,7 +209,7 @@ class Requisicao
 
     /**
      *
-     * Retorna o XML de Requisi√ß√£o
+     * Retorna o XML de RequisiÁ„o
      *
      * @return \SimpleXMLElement
      */
@@ -234,7 +234,7 @@ class Requisicao
 
     /**
      *
-     * Met√≥do de chamada da requisi√ß√£o
+     * MetÛdo de chamada da requisiÁ„o
      *
      * Feita em curl
      *
@@ -247,20 +247,20 @@ class Requisicao
     public function send($ssl = false)
     {
         if (!$this->xmlRequisicao instanceof \SimpleXMLElement) {
-            throw new ResourceNotFoundException('XML de requisi√ß√£o est√° vazio');
+            throw new ResourceNotFoundException('XML de requisiÁ„o est· vazio');
         }
 
-        $xml = Encoding::fixUTF8($this->xmlRequisicao->asXML());
+        $xml = Encoding::toISO8859($this->xmlRequisicao->asXML());
 
         @file_put_contents(DIR_LOGS . 'cielo.log', "\r\n====================================\r\n" . $xml, FILE_APPEND);
 
         // Iniciando o objeto Curl
         $_curl = curl_init();
 
-        // Retornar a transfer√™ncia ao objeto
+        // Retornar a transferÍncia ao objeto
         curl_setopt($_curl, CURLOPT_RETURNTRANSFER, 1);
 
-        // Sempre utilizar uma nova conex√£o
+        // Sempre utilizar uma nova conex„o
         curl_setopt($_curl, CURLOPT_FRESH_CONNECT, 1);
 
         // Retornar Header
@@ -269,22 +269,22 @@ class Requisicao
         // Modo verboso
         curl_setopt($_curl, CURLOPT_VERBOSE, 0);
 
-        // Mostrar o corpo da requisi√ß√£o
+        // Mostrar o corpo da requisiÁ„o
         curl_setopt($_curl, CURLOPT_NOBODY, 0);
 
         // Abrindo a url
         curl_setopt($_curl, CURLOPT_URL, $this->url);
 
-        // Habilitando o m√©todo POST
+        // Habilitando o mÈtodo POST
         curl_setopt($_curl, CURLOPT_POST, true);
 
         // envio os campos
         curl_setopt($_curl, CURLOPT_POSTFIELDS, "mensagem={$xml}");
 
-        //  o tempo em segundos de espera para obter uma conex√£o
+        //  o tempo em segundos de espera para obter uma conex„o
         curl_setopt($_curl, CURLOPT_CONNECTTIMEOUT, 10);
 
-        //  o tempo m√°ximo em segundos de espera para a execu√ß√£o da requisi√ß√£o (curl_exec)
+        //  o tempo m·ximo em segundos de espera para a execuÁ„o da requisiÁ„o (curl_exec)
         curl_setopt($_curl, CURLOPT_TIMEOUT, 40);
 
         if (is_string($ssl)) {
@@ -294,33 +294,33 @@ class Requisicao
             // verifica se a identidade do servidor bate com aquela informada no certificado
             curl_setopt($_curl, CURLOPT_SSL_VERIFYHOST, 2);
 
-            // informa a localiza√ß√£o do certificado para verifica√ß√£o com o peer
+            // informa a localizaÁ„o do certificado para verificaÁ„o com o peer
             //curl_setopt($_curl, CURLOPT_CAINFO, $ssl);
             curl_setopt($_curl, CURLOPT_SSLVERSION, $this->sslVersion);
         }
 
-        // Faz a requisi√ß√£o HTTP
+        // Faz a requisiÁ„o HTTP
         $result = curl_exec($_curl);
 
         @file_put_contents(DIR_LOGS . 'cielo.log', "\r\n====================================\r\n" . $result, FILE_APPEND);
 
-        // Armazenando informa√ß√µes da requisi√ß√£o
+        // Armazenando informaÁıes da requisiÁ„o
 
         $info = curl_getinfo($_curl);
 
-        // Fecho a conex√£o
+        // Fecho a conex„o
         curl_close($_curl);
 
-        // Verificando o status da requisi√ß√£o
+        // Verificando o status da requisiÁ„o
         $this->status = (integer)(isset($info['http_code']) ? $info['http_code'] : 400);
 
-        // Armazenando as informa√ßoes
+        // Armazenando as informaÁoes
         $this->info = $info;
 
-        // Se o servi√ßo estiver OK
+        // Se o serviÁo estiver OK
         if ($this->status != 400) {
 
-            $this->retorno = Encoding::fixUTF8($result);
+            $this->retorno = Encoding::toISO8859(Encoding::fixUTF8($result));
 
             // tenta armazenar em um XML o resultado
             try {
@@ -331,7 +331,7 @@ class Requisicao
             }
 
             if(!$this->xmlRetorno) {
-                $this->xmlRetorno = new \SimpleXMLElement(Encoding::fixUTF8('<erro xmlns="http://ecommerce.cbmp.com.br" id=""><codigo>001</codigo><mensagem><![CDATA[O XML informado n√£o √© v√°lido]]></mensagem></erro>'));
+                $this->xmlRetorno = new \SimpleXMLElement('<erro xmlns="http://ecommerce.cbmp.com.br" id=""><codigo>001</codigo><mensagem><![CDATA[O XML informado n„o È v·lido]]></mensagem></erro>');
             }
 
             // Se a resposta tiver uma tag de erro
@@ -343,6 +343,9 @@ class Requisicao
             $this->retorno = $result;
             $this->errors[] = $result;
         }
+
+        var_dump($this->errors);
+        die;
 
         return $this;
     }

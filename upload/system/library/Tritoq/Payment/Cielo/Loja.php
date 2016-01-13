@@ -234,7 +234,7 @@ class Loja
             throw new InvalidArgumentException('O nome da loja não pode contar mais que 13 caracteres');
         }
 
-        $this->_nomeLoja = $nomeLoja;
+        $this->_nomeLoja = $this->removeAcentos($nomeLoja);
 
         return $this;
     }
@@ -281,4 +281,47 @@ class Loja
 
         return $this;
     }
-} 
+
+    /**
+     *
+     * Remove os acentos do texto
+     *
+     * @param $string
+     * @return String
+     */
+    private function removeAcentos($string) {
+        $troca = array();
+
+        if (extension_loaded('mbstring')) {
+            if (mb_detect_encoding($string . 'x', 'UTF-8, ISO-8859-1') == 'UTF-8') {
+                $string = utf8_decode(strtolower($string));
+            }
+        }
+
+        $string = strtolower($string);
+        // Código ASCII das vogais
+        $ascii['a'] = range(224, 230);
+        $ascii['e'] = range(232, 235);
+        $ascii['i'] = range(236, 239);
+        $ascii['o'] = array_merge(range(242, 246), array(240, 248));
+        $ascii['u'] = range(249, 252);
+        // Código ASCII dos outros caracteres
+        $ascii['b'] = array(223);
+        $ascii['c'] = array(231);
+        $ascii['d'] = array(208);
+        $ascii['n'] = array(241);
+        $ascii['y'] = array(253, 255);
+        foreach ($ascii as $key=>$item) {
+            $acentos = '';
+
+            foreach ($item AS $codigo) {
+                $acentos .= chr($codigo);
+            }
+
+            $troca[$key] = '/['.$acentos.']/i';
+        }
+        $string = preg_replace(array_values($troca), array_keys($troca), $string);
+
+        return strtoupper($string);
+    }
+}
