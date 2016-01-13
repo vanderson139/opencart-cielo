@@ -344,9 +344,6 @@ class Requisicao
             $this->errors[] = $result;
         }
 
-        var_dump($this->errors);
-        die;
-
         return $this;
     }
 }
