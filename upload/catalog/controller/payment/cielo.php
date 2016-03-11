@@ -1,4 +1,6 @@
 <?php
+require_once(DIR_SYSTEM . '/library/cielo.php');
+
 class ControllerPaymentCielo extends Controller {
 
     private $error;
@@ -156,10 +158,6 @@ class ControllerPaymentCielo extends Controller {
     }
 
     public function processar() {
-
-        if(method_exists($this->load, 'library')) {
-            $this->load->library('cielo');
-        }
 
         $this->language->load('payment/cielo');
 

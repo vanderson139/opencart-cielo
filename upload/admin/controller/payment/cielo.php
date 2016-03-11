@@ -1,4 +1,6 @@
 <?php
+require_once(DIR_SYSTEM . '/library/cielo.php');
+
 class ControllerPaymentCielo extends Controller {
 
     private $error = array();
@@ -621,10 +623,6 @@ class ControllerPaymentCielo extends Controller {
 
 
     public function captura() {
-        if(method_exists($this->load, 'library')) {
-            $this->load->library('cielo');
-        }
-
         $this->load->language('payment/cielo');
 
         $this->document->setTitle($this->language->get('heading_title'));
@@ -771,10 +769,6 @@ class ControllerPaymentCielo extends Controller {
     }
 
     public function chargeback($valor = 0) {
-
-        if(method_exists($this->load, 'library')) {
-            $this->load->library('cielo');
-        }
 
         $this->load->language('payment/cielo');
 
