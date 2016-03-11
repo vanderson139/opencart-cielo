@@ -27,7 +27,7 @@ class TritoqAutoloader
             return;
         }
 
-        $file = dirname(__FILE__).'/../'.str_replace('\\', '/', $class).'.php';
+        $file = DIR_SYSTEM . 'library/'.str_replace('\\', '/', $class).'.php';
         if (is_file($file)) {
             require $file;
         }
