@@ -227,7 +227,7 @@ class ControllerPaymentCielo extends Controller {
                     }
                 }
 
-                if ($this->config->get('cielo_teste') == '1') {
+                if ($this->config->get('cielo_teste') == '1' && $this->request->post["formaPagamento"] != 'A') {
                     $transacao->setAutorizar(\Tritoq\Payment\Cielo\Transacao::AUTORIZAR_SEM_AUTENTICACAO);
                 }
 
