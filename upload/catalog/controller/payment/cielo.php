@@ -554,7 +554,12 @@ class ControllerPaymentCielo extends Controller {
 
             $service->doConsulta();
 
-            if($transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_CRIADA) {
+            // Realiza a operação de autorização
+            if(!in_array((int)$transacao->getStatus(), array(
+                \Tritoq\Payment\Cielo\Transacao::STATUS_ANDAMENTO, 
+                \Tritoq\Payment\Cielo\Transacao::STATUS_CAPTURADA, 
+                \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTORIZADA))) {
+
                 $service->doAutorizacao();
             }
 
