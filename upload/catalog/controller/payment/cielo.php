@@ -554,10 +554,24 @@ class ControllerPaymentCielo extends Controller {
 
             $service->doConsulta();
 
-            if(!in_array((int)$transacao->getStatus(), array(\Tritoq\Payment\Cielo\Transacao::STATUS_ANDAMENTO, \Tritoq\Payment\Cielo\Transacao::STATUS_CAPTURADA, \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTORIZADA))
-                && $this->config->get('cielo_autorizacao') != \Tritoq\Payment\Cielo\Transacao::AUTORIZAR_NAO_AUTORIZAR) {
+            if(in_array((int)$transacao->getStatus(), array(
+                \Tritoq\Payment\Cielo\Transacao::STATUS_AUTENTICADA,
+                \Tritoq\Payment\Cielo\Transacao::STATUS_NAO_AUTENTICADA))) {
 
                 $service->doAutorizacao();
+            }
+
+            if(in_array((int)$transacao->getStatus(), array(
+                \Tritoq\Payment\Cielo\Transacao::STATUS_ANDAMENTO,
+                \Tritoq\Payment\Cielo\Transacao::STATUS_CRIADA,
+                \Tritoq\Payment\Cielo\Transacao::STATUS_EM_AUTENTICACAO))) {
+
+                $urlAutenticacao = $transacao->getUrlAutenticacao();
+
+                if(!empty($urlAutenticacao) && !headers_sent()) {
+                    header("Location: $urlAutenticacao");
+                    exit;
+                }
             }
 
             if((int)$transacao->getStatus() == \Tritoq\Payment\Cielo\Transacao::STATUS_AUTORIZADA) {
